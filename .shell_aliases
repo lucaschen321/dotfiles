@@ -1,0 +1,44 @@
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+
+#Aliases for opening files
+alias zshrc="vim ~/.zshrc"
+alias ohmyzsh="vim ~/.oh-my-zsh"
+alias vimrc="vim ~/.vimrc"
+alias bashrc="vim ~/.bashrc"
+alias 3110="cd /Users/lucaschen/Documents/School\ Stuff/College/Sophomore/1st\ Semester/CS\ 3110/Assignments/Final\ Project/ascii-chat"
+alias tmuxconf="vim ~/.tmux.conf" 
+
+# Easier navigation: .., ..., ~ and -
+alias ..="cd .."
+alias cd..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+#alias ~="cd ~" # `cd` is probably faster to type though
+alias -- -="cd -"
+
+# mv, rm, cp, gunzip
+alias mv='mv -v'
+alias rm='rm -i -v'
+alias cp='cp -v'
+alias ungz="gunzip -k"
+
+# File size
+alias fs="stat -f \"%z bytes\""
+
+# Empty the Trash on all mounted volumes and the main HDD.
+# Also, clear Apple’s System Logs & the useless sleepimage to improve shell startup speed
+alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo grm -rf $HOME/.Trash; sudo rm -rtv /private/var/log/asl/*.asl; sudo rm /private/var/vm/sleepimage"
+
+# Show/hide hidden files in Finder
+alias showdotfiles="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+alias hidedotfiles="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+
+# Show/hide all desktop icons (useful when presenting)
+alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
+
+
