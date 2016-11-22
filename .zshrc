@@ -1,3 +1,14 @@
+# General configuration
+HIST_STAMPS="mm/dd/yyyy"
+HISTFILE=~/.zsh_history
+HISTSIZE=99999
+SAVEHIST=99999
+setopt INC_APPEND_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_REDUCE_BLANKS
+setopt HIST_IGNORE_SPACE
+
+
 # OPAM configuration
 . /Users/lucaschen/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
 
@@ -42,7 +53,7 @@ ZSH_THEME="robbyrussell"
 # ENABLE_CORRECTION="true"
 
 # Display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
+ COMPLETION_WAITING_DOTS="true"
 
 # Disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -84,18 +95,12 @@ source $ZSH/oh-my-zsh.sh
 # ssh
 # export SSH_KEY_PATH="~/.ssh/dsa_id"
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
- alias zshrc="vim ~/.zshrc"
- alias ohmyzsh="vim ~/.oh-my-zsh"
- alias vimrc="vim ~/.vimrc"
-
- alias 3110="cd /Users/lucaschen/Documents/School\ Stuff/College/Sophomore/1st\ Semester/CS\ 3110/Assignments/Final\ Project/ascii-chat"
- alias tmuxconf="vim ~/.tmux.conf" 
+# Load the shell dotfiles (aliases, etc.)
+for file in $HOME/.{shell_exports,shell_aliases,shell_functions,shell_config};
+do
+  [ -r "$file" ] && [ -f "$file" ] && source "$file";
+done;
+unset file;
 
 #Terminal Vim key bindings
 bindkey -v
@@ -138,17 +143,6 @@ autoload -U tetris
 zle -N tetris
 bindkey ^T tetris
 
-function batteryInfo() {
-    if [[ $showSysInfo == true ]]; then
-        data=$(acpi | grep -Eo "[0-9]*%|[0-9][0-9]:[0-9][0-9]:[0-9][0-9]")
-        perc=$(echo $data | grep -Eo "[0-9]*%")
-        batTime=$(echo $data | grep -Eo "[0-9][0-9]:[0-9][0-9]:[0-9][0-9]")
-        if [ "$batTime" == "" ]; then
-            batTime="Full"
-        fi
-        echo "$(tput bold)$(tput setaf 166)$perc% ($batTime)> $(tput sgr0)"
-    fi
-}
 
 # Configuration options
 showTime=true
