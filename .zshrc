@@ -8,6 +8,12 @@ setopt HIST_IGNORE_DUPS
 setopt HIST_REDUCE_BLANKS
 setopt HIST_IGNORE_SPACE
 
+# use cache when auto-completing
+zstyle ':completion::complete:*' use-cache 1
+# use case-insensitive auto-completing
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+# graphical auto-complete menu
+zstyle ':completion:*' menu select
 
 # OPAM configuration
 . /Users/lucaschen/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
@@ -71,7 +77,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -137,6 +143,7 @@ function TRAPINT() {
 RPROMPT='${vim_mode}'
 
 export KEYTIMEOUT=100
+
 
 #Tetris :)
 autoload -U tetris
