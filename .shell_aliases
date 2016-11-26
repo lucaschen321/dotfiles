@@ -10,6 +10,8 @@ alias vimrc="vim ~/.vimrc"
 alias bashrc="vim ~/.bashrc"
 alias 3110="cd /Users/lucaschen/Documents/School\ Stuff/College/Sophomore/1st\ Semester/CS\ 3110/Assignments/Final\ Project/ascii-chat"
 alias tmuxconf="vim ~/.tmux.conf" 
+alias shellaliases="vim ~/.shell_aliases"
+alias gitconfig="vim ~/.gitconfig"
 
 # Easier navigation: .., ..., ~ and -
 alias ..="cd .."
