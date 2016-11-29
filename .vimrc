@@ -57,7 +57,8 @@ execute "set rtp+=" . g:opamshare . "/merlin/vim"
 let g:syntastic_ocaml_checkers = ['merlin']
 
 "Use ocp-indent to make autotabbing easy
-set rtp+=/home/ryan/Programming/Tools/ocp-indent-vim/
+"let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+"execute "set rtp+=" . g:opamshare . "/merlin/vim"
 
 "Recommended Syntastic settings for beginners
 set statusline+=%#warningmsg#
@@ -68,3 +69,5 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+
+
