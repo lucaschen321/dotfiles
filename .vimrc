@@ -52,9 +52,12 @@ colorscheme solarized
 inoremap jj <Esc> " Map escape to jj  
 nnoremap j gj " Move vertically by visual line
 nnoremap k gk
+inoremap <tab> <c-r>=Smart_TabComplete()<CR>
+" nnoremap <esc> :noh<return><esc> "This unsets the "last search pattern" register by hitting return
+nnoremap <esc> :noh<return><esc> " Clear highlighting on escape in normal mode
+nnoremap <esc>^[ <esc>^[
 
-
-" Rename tabs to show tab number.
+" Rename tabs to show tab number. Source: http://superuser.com/a/614424
 set tabline=%!MyTabLine()  " custom tab pages line
 function MyTabLine()
         let s = '' " complete tabline goes here
@@ -126,6 +129,34 @@ function MyTabLine()
         return s
 endfunction
 
+" Smart mapping for tab completion. Source: http://vim.wikia.com/wiki/VimTip102
+function! Smart_TabComplete()
+  let line = getline('.')                         " current line
+
+  let substr = strpart(line, -1, col('.')+1)      " from the start of the current
+                                                  " line to one character right
+                                                  " of the cursor
+  let substr = matchstr(substr, "[^ \t]*$")       " word till cursor
+  if (strlen(substr)==0)                          " nothing to match on empty string
+    return "\<tab>"
+  endif
+  let has_period = match(substr, '\.') != -1      " position of period, if any
+  let has_slash = match(substr, '\/') != -1       " position of slash, if any
+  if (!has_period && !has_slash)
+    return "\<C-X>\<C-P>"                         " existing text matching
+  elseif ( has_slash )
+    return "\<C-X>\<C-F>"                         " file matching
+  else
+    return "\<C-X>\<C-O>"                         " plugin matching
+  endif
+endfunction
+
+"Use ocp-indent to make autotabbing easyj
+"let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+"execute "set rtp+=" . g:opamshare . "/merlin/vim"
+filetype plugin on " Turn on omni completion
+set omnifunc=syntaxcomplete#Complete
+
 "Enable merlin, an interactive OCaml code analysis plugin, to be used with vim
 let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
 execute "set rtp+=" . g:opamshare . "/merlin/vim"
@@ -133,11 +164,8 @@ execute "set rtp+=" . g:opamshare . "/merlin/vim"
 "Integrate merlin with Syntastic
 let g:syntastic_ocaml_checkers = ['merlin']
 
-"Use ocp-indent to make autotabbing easy
-"let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-"execute "set rtp+=" . g:opamshare . "/merlin/vim"
-
 "Recommended Syntastic settings for beginners
+nnoremap k gk
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
