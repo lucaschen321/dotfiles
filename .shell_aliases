@@ -4,14 +4,14 @@
 # For a full list of active aliases, run `alias`.
 
 #Aliases for opening files
-alias zshrc="vim ~/.zshrc"
-alias ohmyzsh="vim ~/.oh-my-zsh"
-alias vimrc="vim ~/.vimrc"
-alias bashrc="vim ~/.bashrc"
+alias zshrc="$EDITOR ~/.zshrc"
+alias ohmyzsh="$EDITOR ~/.oh-my-zsh"
+alias vimrc="$EDITOR ~/.vimrc"
+alias bashrc="$EDITOR ~/.bashrc"
 alias 3110="cd /Users/lucaschen/Documents/School\ Stuff/College/Sophomore/1st\ Semester/CS\ 3110/Assignments/Final\ Project/ascii-chat"
-alias tmuxconf="vim ~/.tmux.conf" 
-alias shellaliases="vim ~/.shell_aliases"
-alias gitconfig="vim ~/.gitconfig"
+alias tmuxconf="$EDITOR ~/.tmux.conf" 
+alias shellaliases="$EDITOR ~/.shell_aliases"
+alias gitconfig="$EDITOR ~/.gitconfig"
 
 # Enable aliases to be sudo’ed
 alias sudo="sudo "
@@ -25,7 +25,7 @@ alias v="vim"
 alias gh="github"
 alias rm="trash"
 alias x+="chmod +x"
-alias -- +x="chmod +x"
+# alias -- +x="chmod +x"
 
 # Easier navigation: .., ..., ~ and -
 alias ..="cd .."
@@ -201,7 +201,7 @@ alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && 
 
 # zshrc config
 # alias zshrc="${EDITOR} ${$(cd -P $(dirname $0) && cd ..; pwd -P)}"
-# alias reload="source ~/.zshrc && echo 'Shell config reloaded from ~/.zshrc'"
+alias reload="source ~/.zshrc && echo 'Shell config reloaded from ~/.zshrc'"
 
 # zsh.local config
 # alias localrc="if [[ -a ~/.zsh.local ]]; then ${EDITOR} ~/.zsh.local; fi"
