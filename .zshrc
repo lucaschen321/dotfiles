@@ -152,11 +152,3 @@ export KEYTIMEOUT=100
 autoload -U tetris
 zle -N tetris
 bindkey ^T tetris
-
-
-# Configuration options
-showTime=true
-showSysInfo=false
-shortenPath=false
-showHostname=false
-showUsername=true
