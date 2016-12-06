@@ -44,6 +44,10 @@ syntax enable " Enable syntax highlighting
 "filetype plugin on " Enable filetype-specific plugins
 "colorscheme default " Set default colors
 :autocmd InsertEnter,InsertLeave * set cul! " Only highlight current line in normal mode
+set noerrorbells visualbell t_vb= " Diable beeps
+    if has('autocmd')
+      autocmd GUIEnter * set visualbell t_vb=
+    endif
 
 set background=dark
 colorscheme solarized
