@@ -7,6 +7,7 @@ setopt INC_APPEND_HISTORY
 setopt HIST_IGNORE_DUPS
 setopt HIST_REDUCE_BLANKS
 setopt HIST_IGNORE_SPACE
+export EDITOR="vim"
 
 # use cache when auto-completing
 zstyle ':completion::complete:*' use-cache 1

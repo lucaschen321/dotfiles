@@ -6,7 +6,7 @@
 #Aliases for opening files
 alias zshrc="$EDITOR ~/.zshrc"
 alias ohmyzsh="$EDITOR ~/.oh-my-zsh"
-alias vimrc="$EDITOR ~/.vimrc"
+alias vimrc="$EDITOR ~/.vimrc   "
 alias bashrc="$EDITOR ~/.bashrc"
 alias 3110="cd /Users/lucaschen/Documents/School\ Stuff/College/Sophomore/1st\ Semester/CS\ 3110/Assignments/Final\ Project/ascii-chat"
 alias tmuxconf="$EDITOR ~/.tmux.conf" 
