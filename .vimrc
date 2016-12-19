@@ -155,6 +155,15 @@ function! Smart_TabComplete()
   endif
 endfunction
 
+"NERDTree Configuration
+"autocmd vimenter * NERDTree     " Open a NERDTree automatically on vim startup
+autocmd StdinReadPre * let s:std_in=1 " open a NERDTree automatically when vim 
+                                      " starts up if no files were specified
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+nmap <C-n> :NERDTreeMirror<CR>  "Open NERDTree with Ctrl+n
+let NERDTreeShowHidden=1 " Show hidden files by default
+let NERDTreeQuitOnOpen=1 " Close automatically when opening/editing a file
+
 "Use ocp-indent to make autotabbing easyj
 "let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
 "execute "set rtp+=" . g:opamshare . "/merlin/vim"
@@ -162,20 +171,20 @@ filetype plugin on " Turn on omni completion
 set omnifunc=syntaxcomplete#Complete
 
 "Enable merlin, an interactive OCaml code analysis plugin, to be used with vim
-let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-execute "set rtp+=" . g:opamshare . "/merlin/vim"
-
-"Integrate merlin with Syntastic
-let g:syntastic_ocaml_checkers = ['merlin']
-
-"Recommended Syntastic settings for beginners
-nnoremap k gk
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
+"let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+"execute "set rtp+=" . g:opamshare . "/merlin/vim"
+"
+""Integrate merlin with Syntastic
+"let g:syntastic_ocaml_checkers = ['merlin']
+"
+""Recommended Syntastic settings for beginners
+"nnoremap k gk
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+"
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
 
