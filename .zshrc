@@ -18,16 +18,27 @@ zstyle ':completion:*' menu select
 
 # OPAM configuration
 . /Users/lucaschen/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
-
-# Setting PATH for Python 3.5
-# The original version is saved in .bash_profile.pysave
-#export PATH="/Library/Frameworks/Python.framework/Versions/3.5/bin:${PATH}"
-
-homebrew=/usr/local/bin:/usr/local/sbin
-export PATH=$homebrew:$PATH
-
+#
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+homebrew=/usr/local/bin:/usr/local/sbin
+export PATH=$HOME/bin:$homebrew:$PATH
+
+# Setting PATH for Python
+export PATH=/usr/local/share/python:$PATH
+
+# Enable shims and autocompletions for Python
+eval "$(pyenv init -)"
+
+#IPython
+# export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
+
+# Anaconda
+export PATH="/Users/lucaschen/anaconda/bin:$PATH"
+
+# Remove PATH duplicates, while keeping sort order and earliest appearance
+PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
+export PATH
+
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
