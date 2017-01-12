@@ -8,11 +8,10 @@ brew tap caskroom/versions
 # Install packages
 apps=(
     dropbox
-    flux
     iterm2
     google-chrome
+    google-drive
     spotify
-    skype
     slack
     sublime-text
 )
