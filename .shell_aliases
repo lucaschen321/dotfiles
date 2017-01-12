@@ -77,14 +77,17 @@ hash gls >/dev/null 2>&1 || alias gls="ls"
 
 export CLICOLOR_FORCE=1
 
-# List all files colorized in long format
-alias l="ls -lF ${colorflag}"
+# List all files (including hidden files) in long format
+alias ll="ls -alFh ${colorflag}"
 
-# ls options: A = include hidden (but not . or ..), F = put `/` after folders, h = byte unit suffixes
+# List contents with type flags
 alias ls='ls -Fh ${colorflag}'
 
-# List all files colorized in long format, including dot files
-alias la="ls -a ${colorflag}"
+# List all files (including hidden files)
+alias la="ls -AF ${colorflag}"
+
+# Faster ls
+alias l="ls -CF"
 
 # List only directories
 # alias lsd='gls -l | grep "^d"'
@@ -214,7 +217,9 @@ alias reload="source ~/.zshrc && echo 'Shell config reloaded from ~/.zshrc'"
 # for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
 #   alias "$method"="lwp-request -m '$method'"
 # done
-
+#
 # Miscellaneous
 alias purge="sudo purge"
 
+# Languages
+alias python="python3"
