@@ -16,4 +16,6 @@ apps=(
     sublime-text
 )
 
+echo -e "${RED}Installing default apps...${RESET}"
 brew cask install "${apps[@]}"
+echo -e "${RED}Done${RESET}"

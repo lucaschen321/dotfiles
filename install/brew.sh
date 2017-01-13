@@ -7,8 +7,9 @@ sudo -v
 
 # Check for Homebrew and install it if missing
 if [ ! -f "$(which brew)" ]; then
-  echo "${RED}Installing Homebrew..."
+  echo "${RED}Installing Homebrew...${RESET}"
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  echo "${RED}Done${RESET}"
 fi
 
 brew tap homebrew/versions
@@ -84,7 +85,10 @@ apps=(
     zsh-syntax-highlighting
 )
 
+echo -e "${RED}Installing homebrew packages...${RESET}"
 brew install "${apps[@]}"
 
 # Remove outdated versions from the cellar
 brew cleanup
+
+echo -e "${RED}Done${RESET}"
