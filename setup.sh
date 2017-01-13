@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # https://github.com/nicksp/dotfiles/blob/master/setup.sh
 
@@ -27,13 +27,28 @@ ask_for_sudo() {
 # Install zsh 
 install_zsh() {
     # Check if zsh is installed. If so:
-    if [ -f /bin/zsh ] || [ -f /usr/bin/zsh ]; then
+    if [ -f /bin/zsh ] || [ -f /usr/bin/zsh ] || [ -f /usr/local/bin/zsh ]; then
         # Install oh-my-zsh if it does not exist
         if [ ! -d "$HOME"/.oh-my-zsh ]; then
             echo -e "${RED}Installing oh-my-zsh...${RESET}"
             sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
             echo -e "${RED}Done${RESET}"
         fi
+
+        # Edit $PATH to incorporate brew packages for Mac
+        if [ "$(uname -s)" == "darwin" ]; then
+            brew_dir="/usr/local/bin"
+            paths="/etc/paths"
+            echo -e "$brew_dir\n$(cat $paths)" > $paths
+        fi
+ 
+         # Add used bash and zsh to /etc/shells if not present
+        zsh=$(which zsh)
+        bash=$(which bash)
+        login_shells=/etc/shells
+        grep -q "$bash" "$login_shells" || echo "$bash" >> "$login_shells"
+        grep -q "$zsh" "$login_shells" || echo "$zsh" >> "$login_shells"
+        
         # Set default shell to zsh
         if [ ! "$SHELL" == "$(which zsh)" ]; then
             echo -e "${RED}Changing default shell to zsh...${RESET}"
@@ -45,7 +60,7 @@ install_zsh() {
         system=$(uname -s)
         # Install zsh and recurse
         if [ "$system" == "Darwin" ]; then
-            echo -e "${RED} Zsh not installed. Attempting to zsh using homebrew...${RESET}"
+            echo -e "${RED} zsh not installed. attempting to zsh using homebrew...${RESET}"
             brew install zsh
             install_zsh
         fi
@@ -59,8 +74,10 @@ install_zsh() {
 }
 
 install_packages() {
-    "$DOTFILES_DIR"/install/brew.sh
-    "$DOTFILES_DIR"/install/brew-cask.sh
+    if [ "$(uname -s)" == "Darwin" ]; then
+        "$DOTFILES_DIR"/install/brew.sh
+        "$DOTFILES_DIR"/install/brew-cask.sh
+    fi
 }
 
 symlink_dotfiles() {
@@ -101,8 +118,8 @@ symlink_dotfiles() {
 
 main(){
     ask_for_sudo
-    install_zsh
     install_packages
+    install_zsh
     symlink_dotfiles
 }
 
