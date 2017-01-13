@@ -9,17 +9,17 @@ export EDITOR="vim"
 
 # ANSI Colors
 export BOLD=""
-export RESET="\e[0m"
-export BLACK="\e[0;30m"
-export BLUE="\e[0;34m"
-export CYAN="\e[0;36m"
-export GREEN="\e[0;32m"
-export ORANGE="\e[0;33m"
-export PURPLE="\e[0;35m"
-export RED="\e[0;31m"
-export VIOLET="\e[0;35m"
-export WHITE="\e[0;37m"
-export YELLOW="\e[0;33m"
+export RESET="\033[0m"
+export BLACK="\033[0;30m"
+export BLUE="\033[0;34m"
+export CYAN="\033[0;36m"
+export GREEN="\033[0;32m"
+export ORANGE="\033[0;33m"
+export PURPLE="\033[0;35m"
+export RED="\033[0;31m"
+export VIOLET="\033[0;35m"
+export WHITE="\033[0;37m"
+export YELLOW="\033[0;33m"
 
 # Colors using tput
 # tput sgr0; # reset colors
