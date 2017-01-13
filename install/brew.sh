@@ -1,6 +1,9 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
 # Installs Homebrew and some of the common dependencies needed/desired for software development
+
+# Color flags for printing
+export RESET="\033[0m"
+export RED="\033[0;31m"
 
 # Ask for the administrator password upfront
 sudo -v
@@ -44,6 +47,7 @@ brew upgrade
 # which version I'm using.
 
 apps=(
+    bash
     bash-completion2
     cmake
     coreutils
@@ -82,6 +86,7 @@ apps=(
     vim
     wget
     wifi-password
+    zsh
     zsh-syntax-highlighting
 )
 
