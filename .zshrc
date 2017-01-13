@@ -1,13 +1,10 @@
 # General configuration
 HIST_STAMPS="mm/dd/yyyy"
 HISTFILE=~/.zsh_history
-HISTSIZE=99999
-SAVEHIST=99999
 setopt INC_APPEND_HISTORY
 setopt HIST_IGNORE_DUPS
 setopt HIST_REDUCE_BLANKS
 setopt HIST_IGNORE_SPACE
-export EDITOR="vim"
 
 # use cache when auto-completing
 zstyle ':completion::complete:*' use-cache 1
@@ -17,14 +14,11 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*' menu select
 
 # OPAM configuration
-. /Users/lucaschen/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+./Users/lucaschen/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
 #
 # If you come from bash you might have to change your $PATH.
 homebrew=/usr/local/bin:/usr/local/sbin
 export PATH=$HOME/bin:$homebrew:$PATH
-
-# Setting PATH for Python
-export PATH=/usr/local/share/python:$PATH
 
 # Enable shims and autocompletions for Python
 eval "$(pyenv init -)"
@@ -119,7 +113,7 @@ source $ZSH/oh-my-zsh.sh
 # Load the shell dotfiles (aliases, etc.)
 for file in $HOME/.{shell_exports,shell_aliases,shell_functions,shell_config};
 do
-  [ -r "$file" ] && [ -f "$file" ] && source "$file";
+  [ -r "$file" ] && [ -f "$file" ] && source "$file"
 done;
 unset file;
 

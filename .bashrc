@@ -2,10 +2,9 @@
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/:$PATH"
 
-export EDITOR="vim"
 
 # OPAM configuration
-. /Users/lucaschen/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+./Users/lucaschen/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
 
 # Setting PATH for Python 3.5
 # The original version is saved in .bash_profile.pysave
@@ -13,4 +12,3 @@ export EDITOR="vim"
 
 # added by Anaconda3 4.1.1 installer
 # export PATH="/Users/lucaschen/anaconda/bin:$PATH"
-
