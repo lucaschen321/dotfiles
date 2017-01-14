@@ -35,19 +35,19 @@ install_zsh() {
             echo -e "${RED}Done${RESET}"
         fi
 
-        # Edit $PATH to incorporate brew packages for Mac
-        if [ "$(uname -s)" == "darwin" ]; then
-            brew_dir="/usr/local/bin"
-            paths="/etc/paths"
-            echo -e "$brew_dir\n$(cat $paths)" > $paths
+        # Edit /etc/paths to incorporate /usr/local/bin for Mac
+        brew_dir=/usr/local/bin
+        paths=/etc/paths
+        if [ "$(uname -s)" == "Darwin" ]; then
+          grep -q "$brew_dir" "$paths" || sudo sh -c 'echo "$brew_dir\n$(cat $paths)" > $paths'
         fi
  
-         # Add used bash and zsh to /etc/shells if not present
+         # Edit /etc/shells to incorporate installed zsh and bash paths if not present
         zsh=$(which zsh)
         bash=$(which bash)
         login_shells=/etc/shells
-        grep -q "$bash" "$login_shells" || echo "$bash" >> "$login_shells"
-        grep -q "$zsh" "$login_shells" || echo "$zsh" >> "$login_shells"
+        grep -q "$bash" "$login_shells" || sudo sh -c "echo $bash >> $login_shells"
+        grep -q "$zsh" "$login_shells" || sudo sh -c "echo $zsh >> $login_shells"
         
         # Set default shell to zsh
         if [ ! "$SHELL" == "$(which zsh)" ]; then
