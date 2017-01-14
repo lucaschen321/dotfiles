@@ -81,18 +81,22 @@ install_packages() {
 }
 
 install_vim_plugins() {
+    echo -e "${RED}Installing vim plugins...${RESET}"
+
     # Install Pathogen
     mkdir -p ~/.vim/autoload ~/.vim/bundle && \
     curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 
     # Install Solarized
-    git clone git://github.com/altercation/vim-colors-solarized.git ~/.vim/bundle
+    git clone git://github.com/altercation/vim-colors-solarized.git ~/.vim/bundle/vim-colors-solarized
 
     # Install NerdTree 
     git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
 
     # Install Syntastic
-    git clone --depth=1 https://github.com/vim-syntastic/syntastic.git ~/.vim/bundle
+    git clone --depth=1 https://github.com/vim-syntastic/syntastic.git ~/.vim/bundle/syntastic
+
+    echo -e "${RED}Done${RESET}"
 }
 
 symlink_dotfiles() {
@@ -104,14 +108,14 @@ symlink_dotfiles() {
     fi
     
     FILES_TO_SYMLINK=(
-    '.bash_profile'
-    '.bashrc'
-    '.gitconfig'
-    '.shell_aliases'
-    '.shell_config'
-    '.tmux.conf'
-    '.vimrc'
-    '.zshrc'
+        '.bash_profile'
+        '.bashrc'
+        '.gitconfig'
+        '.shell_aliases'
+        '.shell_config'
+        '.tmux.conf'
+        '.vimrc'
+        '.zshrc'
     )
     
     mkdir "$DOTFILES_BACKUP_DIR"
