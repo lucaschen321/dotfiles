@@ -80,6 +80,21 @@ install_packages() {
     fi
 }
 
+install_vim_plugins() {
+    # Install Pathogen
+    mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+    curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+
+    # Install Solarized
+    git clone git://github.com/altercation/vim-colors-solarized.git ~/.vim/bundle
+
+    # Install NerdTree 
+    git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
+
+    # Install Syntastic
+    git clone --depth=1 https://github.com/vim-syntastic/syntastic.git ~/.vim/bundle
+}
+
 symlink_dotfiles() {
     # Change dotfile directory to target directory
     if [ "$SCRIPT_PATH" != "$DOTFILES_DIR" ]; then
@@ -119,6 +134,7 @@ symlink_dotfiles() {
 main(){
     ask_for_sudo
     install_packages
+    install_vim_plugins
     install_zsh
     symlink_dotfiles
 }
