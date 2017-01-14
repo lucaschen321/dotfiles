@@ -39,7 +39,7 @@ install_zsh() {
         brew_dir=/usr/local/bin
         paths=/etc/paths
         if [ "$(uname -s)" == "Darwin" ]; then
-          grep -q "$brew_dir" "$paths" || sudo sh -c 'echo "$brew_dir\n$(cat $paths)" > $paths'
+          grep -q "$brew_dir" "$paths" || sudo sh -c "echo \"$brew_dir\n$(cat $paths)\" > $paths"
         fi
  
          # Edit /etc/shells to incorporate installed zsh and bash paths if not present
@@ -56,11 +56,11 @@ install_zsh() {
             echo -e "${RED}Done${RESET}"
         fi
     else
+        echo -e "${RED}zsh not installed. Attempting to install zsh...${RESET}"
         # If zsh is not installed, get OS version of the machine
         system=$(uname -s)
         # Install zsh and recurse
         if [ "$system" == "Darwin" ]; then
-            echo -e "${RED} zsh not installed. attempting to zsh using homebrew...${RESET}"
             brew install zsh
             install_zsh
         fi
@@ -70,6 +70,7 @@ install_zsh() {
                 install_zsh
            fi
         fi
+        echo -e "${RED}Done${RESET}"
     fi
 }
 
