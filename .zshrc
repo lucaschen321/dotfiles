@@ -27,7 +27,7 @@ eval "$(pyenv init -)"
 # export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
 
 # Anaconda
-export PATH="/Users/lucaschen/anaconda/bin:$PATH"
+export PATH="$HOME/anaconda/bin:$PATH"
 
 # Remove PATH duplicates, while keeping sort order and earliest appearance
 PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
