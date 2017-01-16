@@ -88,7 +88,6 @@ function MyTabLine()
                 let s .= ' '
                 " set page number string
                 let s .= t + 1 . ' '
-                " get buffer names and statuses
                 let n = ''      "temp string for buffer names while we loop and check buftype
                 let m = 0       " &modified counter
                 let bc = len(tabpagebuflist(t + 1))     "counter to avoid last ' '
@@ -199,5 +198,19 @@ let g:syntastic_check_on_wq = 0
 let g:syntastic_loc_list_height=5
 
 " Checkers for Syntastic
-let g:syntastic_python_checkers=['flake8']
+let g:syntastic_python_checkers = ['flake8']
 let g:syntastic_ocaml_checkers = ['merlin']
+let g:syntastic_sh_checkers = ['bashate', 'sh', 'shellcheck']
+let g:syntastic_vim_checkers = ['vimlint', 'vint']
+
+" Airline settings
+let g:airline_theme='solarized'
+" let g:solarized_base16 = 1
+" let g:airline_solarized_normal_green = 1
+" let g:airline_solarized_dark_inactive_border = 1
+" let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#tabline#left_sep = ' '
+" let g:airline#extensions#tabline#left_alt_sep = '|'
+
+" Vim Session settings
+let g:session_autosave = 'no'
