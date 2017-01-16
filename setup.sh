@@ -81,7 +81,17 @@ install_packages() {
     fi
 }
 
-install_vim_plugins() {
+install_vim_and_tmux_plugins() {
+
+    #
+    # Install Vim Plugins:
+    #
+    # - Pathogen (Plugin manager)
+    # - Solarized
+    # - NerdTree
+    # - Syntastic
+    # - Airline
+    
     echo -e "${RED}Installing vim plugins...${RESET}"
 
     # Install Pathogen
@@ -97,7 +107,28 @@ install_vim_plugins() {
     # Install Syntastic
     git clone --depth=1 https://github.com/vim-syntastic/syntastic.git ~/.vim/bundle/syntastic
 
+    # Install Airline
+    git clone https://github.com/vim-airline/vim-airline ~/.vim/bundle/vim-airline
+    git clone https://github.com/vim-airline/vim-airline-themes ~/.vim/bundle/vim-airline-themes
+
+    # Install Vim Session
+    git clone https://github.com/xolox/vim-session.git ~/.vim/bundle/vim-session
+    git clone https://github.com/xolox/vim-misc.git ~/.vim/bundle/vim-misc
+
     echo -e "${RED}Done${RESET}"
+
+    #
+    # Install Tmux plugins (see ~/.tmux.conf for plugins)
+    #
+
+    echo -e "${RED}Installing tmux plugins...${RESET}"
+
+    # Install Tmux plugin manager and load plugins
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    tmux run-shell /Users/lucaschen/.tmux/plugins/tpm/bindings/install_plugins
+
+    echo -e "${RED}Done${RESET}"
+
 }
 
 symlink_dotfiles() {
@@ -114,6 +145,7 @@ symlink_dotfiles() {
         '.gitconfig'
         '.shell_aliases'
         '.shell_config'
+        '.shell_exports'
         '.tmux.conf'
         '.vimrc'
         '.zshrc'
@@ -139,9 +171,9 @@ symlink_dotfiles() {
 main(){
     ask_for_sudo
     install_packages
-    install_vim_plugins
     install_zsh
     symlink_dotfiles
+    install_vim_and_tmux_plugins
 }
 
 main
