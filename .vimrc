@@ -1,8 +1,8 @@
 " General Configuration
 execute pathogen#infect()
-" set nocompatible " Disable Vi-compatibility settings
+set nocompatible " Disable Vi-compatibility settings
 " set hidden " Hides buffers instead of closing them, allows opening new buffers when current has unsaved changes
-" set title " Show title in terminal
+set title " Show title in terminal
 set number " Show line numbers
 set wrap " Wrap lines
 set linebreak " Break line on word
@@ -49,20 +49,30 @@ set noerrorbells visualbell t_vb= " Diable beeps
       autocmd GUIEnter * set visualbell t_vb=
     endif
 
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-autocmd BufWinLeave * call clearmatches()
+" Automatically remove trailing whitespaces
+function! StripTrailingWhitespaces()
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$// " delete trailing whitspaces
+    call cursor(l, c) " return cursor to previous position
+endfunction
+autocmd BufWrite <buffer> :call StripTrailingWhitespaces()
 
 set background=dark
 colorscheme solarized
 
 " Custom mappings
-inoremap jj <Esc> " Map escape to jj  
+inoremap jk <Esc> " Map escape to jj  
 nnoremap j gj " Move vertically by visual line
 nnoremap k gk
+vnoremap j gj
+vnoremap k gk
+nnoremap <Down> gj
+nnoremap <Up> gk
+vnoremap <Down> gj
+vnoremap <Up> gk
+inoremap <Down> <C-o>gj
+inoremap <Up> <C-o>gk
 inoremap <tab> <c-r>=Smart_TabComplete()<CR>
 " nnoremap <esc> :noh<return><esc> "This unsets the "last search pattern" register by hitting return
 nnoremap <esc> :noh<return><esc> " Clear highlighting on escape in normal mode
@@ -150,7 +160,6 @@ function! Smart_TabComplete()
                                                   " line to one character right
                                                   " of the cursor
   let substr = matchstr(substr, "[^ \t]*$")       " word till cursor
-  if (strlen(substr)==0)                          " nothing to match on empty string
     return "\<tab>"
   endif
   let has_period = match(substr, '\.') != -1      " position of period, if any
@@ -166,12 +175,25 @@ endfunction
 
 " NERDTree Configuration
 " autocmd vimenter * NERDTree     " Open a NERDTree automatically on vim startup
-autocmd StdinReadPre * let s:std_in=1 " open a NERDTree automatically when vim 
+" autocmd StdinReadPre * let s:std_in=1 " open a NERDTree automatically when vim 
                                       " starts up if no files were specified
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 nmap <C-n> :NERDTreeToggle<CR>  "Open NERDTree with Ctrl+n
 let NERDTreeShowHidden=1 " Show hidden files by default
 let NERDTreeQuitOnOpen=1 " Close automatically when opening/editing a file
+map <Leader>n <plug>NERDTreeTabsToggle<CR> " Open NERDTree with <CTRL+n>
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif "Close vim if the only window left open is a NERDTree
+
+" NERDTree Tabs
+let g:nerdtree_tabs_open_on_gui_startup = 0
+let g:nerdtree_tabs_open_on_console_startup = 0
+let g:nerdtree_tabs_no_startup_for_diff = 1
+let g:nerdtree_tabs_smart_startup_focus = 1
+let g:nerdtree_tabs_open_on_new_tab = 1
+let g:nerdtree_tabs_meaningful_tab_names = 1
+let g:nerdtree_tabs_autoclose = 1
+let g:nerdtree_tabs_synchronize_view = 1
+let g:nerdtree_tabs_synchronize_focus = 1
 
  "Use ocp-indent to make autotabbing easyj
 " let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
@@ -201,7 +223,10 @@ let g:syntastic_loc_list_height=5
 let g:syntastic_python_checkers = ['flake8']
 let g:syntastic_ocaml_checkers = ['merlin']
 let g:syntastic_sh_checkers = ['bashate', 'sh', 'shellcheck']
+let g:syntastic_c_checkers = ['gcc', 'make']
 let g:syntastic_vim_checkers = ['vimlint', 'vint']
+let g:syntastic_java_checkers = ['checkstyle', 'javac']
+let g:syntastic_markdown_checkers = ['mdl']
 
 " Airline settings
 let g:airline_theme='solarized'
@@ -214,3 +239,11 @@ let g:airline_theme='solarized'
 
 " Vim Session settings
 let g:session_autosave = 'no'
+
+" Vim Notes settings
+let g:notes_directories = ['~/Google Drive/Documents/Notes/Text Notes', '~/Google Drive/Documents/Notes/Text Notes/CS/Programming Langauges']
+let g:notes_tab_indents = 0
+
+" YouCompleteMe Settings
+let g:loaded_youcompleteme = 1 " Don't load YCM
+let b:ycm_largefile=1
