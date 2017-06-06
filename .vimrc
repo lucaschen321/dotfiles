@@ -43,7 +43,7 @@ syntax enable " Enable syntax highlighting
 " filetype indent on " Enable filetype-specific indentation
 " filetype plugin on " Enable filetype-specific plugins
 " colorscheme default " Set default colors
-:autocmd InsertEnter,InsertLeave * set cul! " Only highlight current line in normal mode
+autocmd InsertEnter,InsertLeave * set cul! " Only highlight current line in normal mode
 set noerrorbells visualbell t_vb= " Diable beeps
     if has('autocmd')
       autocmd GUIEnter * set visualbell t_vb=
@@ -53,16 +53,17 @@ set noerrorbells visualbell t_vb= " Diable beeps
 function! StripTrailingWhitespaces()
     let l = line(".")
     let c = col(".")
-    %s/\s\+$// " delete trailing whitspaces
-    call cursor(l, c) " return cursor to previous position
+    %s/\s\+$//e         " delete trailing whitspaces
+    call cursor(l, c)   " return cursor to previous position
 endfunction
 autocmd BufWrite <buffer> :call StripTrailingWhitespaces()
 
 set background=dark
+" colorscheme Tomorrow-Night
 colorscheme solarized
 
 " Custom mappings
-inoremap jk <Esc> " Map escape to jj  
+inoremap jj <Esc> " Map escape to jj
 nnoremap j gj " Move vertically by visual line
 nnoremap k gk
 vnoremap j gj
@@ -175,7 +176,7 @@ endfunction
 
 " NERDTree Configuration
 " autocmd vimenter * NERDTree     " Open a NERDTree automatically on vim startup
-" autocmd StdinReadPre * let s:std_in=1 " open a NERDTree automatically when vim 
+" autocmd StdinReadPre * let s:std_in=1 " open a NERDTree automatically when vim
                                       " starts up if no files were specified
 " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 nmap <C-n> :NERDTreeToggle<CR>  "Open NERDTree with Ctrl+n
@@ -230,6 +231,7 @@ let g:syntastic_markdown_checkers = ['mdl']
 
 " Airline settings
 let g:airline_theme='solarized'
+" let g:airline_theme='tomorrow'
 " let g:solarized_base16 = 1
 " let g:airline_solarized_normal_green = 1
 " let g:airline_solarized_dark_inactive_border = 1
@@ -241,8 +243,9 @@ let g:airline_theme='solarized'
 let g:session_autosave = 'no'
 
 " Vim Notes settings
-let g:notes_directories = ['~/Google Drive/Documents/Notes/Text Notes', '~/Google Drive/Documents/Notes/Text Notes/CS/Programming Langauges']
+let g:notes_directories = ['~/Google Drive/Documents/Notes/Vim Notes'] ", '~/Google Drive/Documents/Notes/Text Notes/CS/Programming Langauges']
 let g:notes_tab_indents = 0
+let g:notes_conceal_url = 0
 
 " YouCompleteMe Settings
 let g:loaded_youcompleteme = 1 " Don't load YCM
