@@ -3,14 +3,23 @@
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 
-#Aliases for opening files
+# ssh Aliases
+alias 3410vm="ssh -p 2222 localhost -l vm"
+alias ubuntuvm="ssh -p 2222 localhost -l lucaschen"
+alias csug="ssh lmc336@ugclinux.cs.cornell.edu"
+
+# Aliases for opening files types in apps
+alias marked='open -a "Marked 2" '
+
+# Aliases for opening files in vim
 alias zshrc="$EDITOR ~/.zshrc"
 alias ohmyzsh="cd ~/.oh-my-zsh"
-alias vimrc="$EDITOR ~/.vimrc   "
+alias vimrc="$EDITOR ~/.vimrc"
 alias bashrc="$EDITOR ~/.bashrc"
-alias 3110="cd /Users/lucaschen/Documents/School\ Stuff/College/Sophomore/1st\ Semester/CS\ 3110/Assignments/Final\ Project/ascii-chat"
-alias tmuxconf="$EDITOR ~/.tmux.conf" 
+alias tmuxconf="$EDITOR ~/.tmux.conf"
 alias shellaliases="$EDITOR ~/.shell_aliases"
+alias shellconfig="$EDITOR ~/.shell_config"
+alias shellfunctions="$EDITOR ~/.shell_functions"
 alias gitconfig="$EDITOR ~/.gitconfig"
 
 # Enable aliases to be sudo’ed
@@ -44,7 +53,7 @@ alias ungz="gunzip -k"
 
 # Trim new lines and copy to clipboard
 # alias trimcopy="tr -d '\n' | pbcopy"
-# 
+#
 # alias cask='brew cask' # i <3 u cask
 # alias where=which # sometimes i forget
 # alias brwe=brew  #typos
@@ -57,8 +66,8 @@ alias ungz="gunzip -k"
 # alias vaghalt='vagrant halt'
 
 # Be nice
-alias htop='sudo htop'
 alias hosts='sudo $EDITOR /etc/hosts'   # yes I occasionally 127.0.0.1 twitter.com ;)
+alias vtop="vtop --theme wizard"  # themes: acid, becca, brew, dark, monokai, parallax, seti, wizard
 
 #
 # Time to upgrade `ls`
@@ -205,6 +214,7 @@ alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && 
 # zshrc config
 # alias zshrc="${EDITOR} ${$(cd -P $(dirname $0) && cd ..; pwd -P)}"
 alias reload="source ~/.zshrc && echo 'Shell config reloaded from ~/.zshrc'"
+alias reloadtmux="tmux source-file ~/.tmux.conf"
 
 # zsh.local config
 # alias localrc="if [[ -a ~/.zsh.local ]]; then ${EDITOR} ~/.zsh.local; fi"
@@ -220,6 +230,12 @@ alias reload="source ~/.zshrc && echo 'Shell config reloaded from ~/.zshrc'"
 #
 # Miscellaneous
 alias purge="sudo purge"
+alias killwindowserver="sudo killall -HUP WindowServer"
+
+# Packages
+alias mysql=/usr/local/mysql/bin/mysql
+alias mysqladmin=/usr/local/mysql/bin/mysqladmin
 
 # Languages
-alias python="python3"
+# alias python="python3"
+alias gcc="gcc-6"

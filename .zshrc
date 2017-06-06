@@ -14,20 +14,23 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*' menu select
 
 # OPAM configuration
-./Users/lucaschen/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+. ~/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
 #
 # If you come from bash you might have to change your $PATH.
 homebrew=/usr/local/bin:/usr/local/sbin
 export PATH=$HOME/bin:$homebrew:$PATH
 
 # Enable shims and autocompletions for Python
-eval "$(pyenv init -)"
+# eval "$(pyenv init -)"
 
-#IPython
+# IPython
 # export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
 
 # Anaconda
-export PATH="$HOME/anaconda/bin:$PATH"
+# export PATH="$HOME/anaconda/bin:$PATH"
+
+# Python
+PATH=/usr/local/share/python:$PATH
 
 # Remove PATH duplicates, while keeping sort order and earliest appearance
 PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
@@ -86,7 +89,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-extras osx brew z zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(git git-extras osx brew z zsh-autosuggestions zsh-syntax-highlighting colorize colored-man-pages)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -148,11 +151,10 @@ zle -N zle-line-finish
 function TRAPINT() {
   vim_mode=$vim_ins_mode
   return $(( 128 + $1 ))
-} 
+}
 RPROMPT='${vim_mode}'
 
 export KEYTIMEOUT=100
-
 
 #Tetris :)
 autoload -U tetris
