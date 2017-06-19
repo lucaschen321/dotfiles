@@ -24,6 +24,7 @@ export ANS=""
 export RESET="\033[0m"
 export RED="\033[0;31m"
 export BLUE="\033[0;34m"
+export PURPLE="\033[0;35m"
 
 #
 # Utils/helper functions
@@ -59,6 +60,11 @@ print_question() {
     fi
 }
 
+print_info() {
+  # Print info in purple
+  printf "%s  $1s\n" "${RED}" "${RESET}"
+}
+
 print_success() {
   # Print output in green
   printf "%s  [✔] $1%s\n" "${GREEN}" "${RESET}"
@@ -83,57 +89,101 @@ get_os() {
 # Install zsh
 install_zsh() {
     # Check if zsh is installed. If so:
-    if [[ -f /bin/zsh  ||  -f /usr/bin/zsh  ||  -f /usr/local/bin/zsh ]]; then
+    which zsh &> /dev/null
+    if [[ $? == 0 ]]; then
         # Install oh-my-zsh if it does not exist
         if [ ! -d "$HOME"/.oh-my-zsh ]; then
-            echo -e "${BLUE}Installing oh-my-zsh...${RESET}"
+            print_info "Installing oh-my-zsh"
             sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-            echo -e "${BLUE}Done${RESET}"
+            print_success "zsh installed"
         fi
 
-        # Edit /etc/paths to incorporate /usr/local/bin for Mac
-        brew_dir=/usr/local/bin
-        paths=/etc/paths
-        if [[ "$(uname -s)" == "Darwin" ]]; then
-          grep -q "$brew_dir" "$paths" || sudo sh -c "echo \"$brew_dir\n$(cat $paths)\" > $paths"
-        fi
-
-         # Edit /etc/shells to incorporate installed zsh and bash paths if not present
+        # Edit /etc/shells to incorporate installed zsh path if not present
         zsh=$(which zsh)
-        bash=$(which bash)
         login_shells=/etc/shells
-        grep -q "$bash" "$login_shells" || sudo sh -c "echo $bash >> $login_shells"
         grep -q "$zsh" "$login_shells" || sudo sh -c "echo $zsh >> $login_shells"
 
         # Set default shell to zsh
         if [ ! "$SHELL" == "$(which zsh)" ]; then
-            echo -e "${BLUE}Changing default shell to zsh...${RESET}"
+            print_info "Changing default shell to zsh"
             chsh -s "$(which zsh)"
-            echo -e "${BLUE}Done${RESET}"
+            print_success "Done"
         fi
     else
-        echo -e "${BLUE}zsh not installed. Attempting to install zsh...${RESET}"
-        # If zsh is not installed, get OS version of the machine
-        system=$(uname -s)
-        # Install zsh and recurse
-        if [ "$system" == "Darwin" ]; then
+        print_info "zsh not installed. Attempting to install zsh"
+        # Attempt to install zsh and recurse
+        if [ "$OS" == "mac" ]; then
             brew install zsh
             install_zsh
         fi
-        if [ "$system" == "Linux" ]; then
-           if [ -f /etc/redhat-release ]; then
-                sudo apt-get install zsh
-                install_zsh
-           fi
+        if [ "$OS" == "ubuntu" ]; then
+            sudo apt-get install zsh
+            install_zsh
         fi
-        echo -e "${BLUE}Done${RESET}"
+        print_success "Done"
+    fi
+}
+
+# Install bash
+install_bash() {
+    # Install most recent bash version on mac if not present
+    if [[ "$OS" == "mac" && ! -e /usr/local/bin/bash ]]; then
+        print_info "Installing brew's bash"
+        brew install bash
+        print_success "Done"
+    fi
+
+    # Edit /etc/shells to incorporate installed bash path if not present
+    bash=$(which bash)
+    login_shells=/etc/shells
+    grep -q "$bash" "$login_shells" || sudo sh -c "echo $bash >> $login_shells"
+
+    # Set default shell to bash
+    if [ ! "$SHELL" == "$(which zsh)" ]; then
+        print_info "Changing default shell to bash"
+        chsh -s "$(which bash)"
+        print_success "Done"
+    fi
+}
+
+install_shell() {
+    # Install zsh and bash
+    print_question "Use zsh? (y/n)"
+    if [[ "$ANS" == "yes" ]]; then
+        install_zsh
+    else
+        print_question "Use bash? (y/n)"
+        if [[ "$ANS" == "yes" ]]; then
+            install_bash
+        else
+            print_error "Choose bash or zsh...exiting"
+            exit 1
+        fi
     fi
 }
 
 install_packages() {
-    if [ "$(uname -s)" == "Darwin" ]; then
+    if [ "$OS" == "mac" ]; then
+        which brew &> /dev/null
+        if [[ $? != 0 ]]; then
+            # Install Homebrew
+            print_info "Installing homebrew"
+            ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+            print_success "Done"
+
+            # Edit /etc/paths to incorporate /usr/local/bin for Mac
+            brew_dir=/usr/local/bin
+            paths=/etc/paths
+            if [[ "$OS" == "mac" ]]; then
+                grep -q "$brew_dir" "$paths" || sudo sh -c "echo \"$brew_dir\n$(cat $paths)\" > $paths"
+            fi
+        else
+            brew update
+        fi
         "$DOTFILES_DIR"/install/brew.sh
         "$DOTFILES_DIR"/install/brew-cask.sh
+    elif [[ "$OS" == "ubuntu" ]]; then
+        "$DOTFILES_DIR"/install/apt-get.sh
     fi
 }
 
@@ -147,96 +197,108 @@ install_vim_and_tmux_plugins() {
     # - NerdTree
     # - Syntastic
     # - Airline
+    # - Vim Session
+    # - Vim Notes
+    # - Surround.vim
 
-    echo -e "${BLUE}Installing vim plugins...${RESET}"
+    print_question "Install vim plugins? (y/n)"
+    if [[ "$ANS" == "yes" ]]; then
+        print_info "Installing vim plugins"
 
-    # Install Pathogen
-    mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-    curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+        # Install Pathogen
+        mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+        curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 
-    # Install Solarized
-    git clone git://github.com/altercation/vim-colors-solarized.git ~/.vim/bundle/vim-colors-solarized
+        # Install Solarized
+        git clone git://github.com/altercation/vim-colors-solarized.git ~/.vim/bundle/vim-colors-solarized
 
-    # Install NerdTree
-    git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
+        # Install NerdTree
+        git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
 
-    # Install Syntastic
-    git clone --depth=1 https://github.com/vim-syntastic/syntastic.git ~/.vim/bundle/syntastic
+        # Install Syntastic
+        git clone --depth=1 https://github.com/vim-syntastic/syntastic.git ~/.vim/bundle/syntastic
 
-    # Install Airline
-    git clone https://github.com/vim-airline/vim-airline ~/.vim/bundle/vim-airline
-    git clone https://github.com/vim-airline/vim-airline-themes ~/.vim/bundle/vim-airline-themes
+        # Install Airline
+        git clone https://github.com/vim-airline/vim-airline ~/.vim/bundle/vim-airline
+        git clone https://github.com/vim-airline/vim-airline-themes ~/.vim/bundle/vim-airline-themes
 
-    # Install Vim Session
-    git clone https://github.com/xolox/vim-session.git ~/.vim/bundle/vim-session
-    git clone https://github.com/xolox/vim-misc.git ~/.vim/bundle/vim-misc
+        # Install Vim Session
+        git clone https://github.com/xolox/vim-session.git ~/.vim/bundle/vim-session
+        git clone https://github.com/xolox/vim-misc.git ~/.vim/bundle/vim-misc
 
-    # Install Vim Notes
-    git clone https://github.com/xolox/vim-notes.git ~/.vim/bundle/vim-notes
+        # Install Vim Notes
+        git clone https://github.com/xolox/vim-notes.git ~/.vim/bundle/vim-notes
 
-    # Install Surround.vim
-    git clone git://github.com/tpope/vim-surround.git
+        # Install Surround.vim
+        git clone git://github.com/tpope/vim-surround.git
 
-    echo -e "${BLUE}Done${RESET}"
+        print_success "Done"
+    fi
 
     #
     # Install Tmux plugins (see ~/.tmux.conf for plugins)
     #
+    print_question "Install tmux plugins? (y/n)"
+    if [[ "$ANS" == "yes" ]]; then
 
-    echo -e "${BLUE}Installing tmux plugins...${RESET}"
+        print_info "Installing tmux plugins"
 
-    # Install Tmux plugin manager and load plugins
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-    tmux run-shell "$HOME"/.tmux/plugins/tpm/bindings/install_plugins
+        # Install Tmux plugin manager and load plugins
+        git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+        tmux run-shell "$HOME"/.tmux/plugins/tpm/bindings/install_plugins
 
-    echo -e "${BLUE}Done${RESET}"
+        print_success "Done"
+    fi
 
 }
 
 symlink_dotfiles() {
-    # Change dotfile directory to target directory
-    if [ "$SCRIPT_PATH" != "$DOTFILES_DIR" ]; then
-        echo -e "${BLUE}Moving dotfile directory to target destination...${RESET}"
-        mv "$SCRIPT_PATH" "$DOTFILES_DIR"
-        echo -e "${BLUE}Done${RESET}"
+    print_question "Symlink dotfiles? (y/n)"
+    if [[ "$ANS" == "yes" ]]; then
+        # Change dotfile directory to target directory
+        if [ "$SCRIPT_PATH" != "$DOTFILES_DIR" ]; then
+            print_info "Moving dotfile directory to target destination"
+            mv "$SCRIPT_PATH" "$DOTFILES_DIR"
+            print_success "Done"
+        fi
+
+        FILES_TO_SYMLINK=(
+            '.bash_profile'
+            '.bashrc'
+            '.gitconfig'
+            '.shell_aliases'
+            '.shell_config'
+            '.shell_exports'
+            '.shell_functions'
+            '.tmux.conf'
+            '.vimrc'
+            '.zshrc'
+        )
+
+        mkdir "$DOTFILES_BACKUP_DIR"
+
+        # Move existing dotfiles to backup directory
+        print_info "Backing up dotfiles"
+        for i in "${FILES_TO_SYMLINK[@]}"; do
+            mv "$HOME/${i}" "$DOTFILES_BACKUP_DIR"
+        done
+        print_success "Done"
+
+        # Create symlinks in home directory to new dotfiles
+        print_info "Creating symlinks in home directory to dotfiles"
+        for i in "${FILES_TO_SYMLINK[@]}"; do
+            ln -s "$DOTFILES_DIR/${i}" "$HOME/${i}"
+        done
+        print_success "Done"
     fi
-
-    FILES_TO_SYMLINK=(
-        '.bash_profile'
-        '.bashrc'
-        '.gitconfig'
-        '.shell_aliases'
-        '.shell_config'
-        '.shell_exports'
-        '.shell_functions'
-        '.tmux.conf'
-        '.vimrc'
-        '.zshrc'
-    )
-
-    mkdir "$DOTFILES_BACKUP_DIR"
-
-    # Move existing dotfiles to backup directory
-    echo -e "${BLUE}Backing up dotfiles...${RESET}"
-    for i in "${FILES_TO_SYMLINK[@]}"; do
-        mv "$HOME/${i}" "$DOTFILES_BACKUP_DIR"
-    done
-    echo -e "${BLUE}Done${RESET}"
-
-    # Create symlinks in home directory to new dotfiles
-    echo -e "${BLUE}Creating symlinks in home directory to dotfiles...${RESET}"
-    for i in "${FILES_TO_SYMLINK[@]}"; do
-        ln -s "$DOTFILES_DIR/${i}" "$HOME/${i}"
-    done
-    echo -e "${BLUE}Done${RESET}"
 }
 
 main(){
     ask_for_sudo
     install_packages
-    install_zsh
-    symlink_dotfiles
     install_vim_and_tmux_plugins
+    install_shell
+    symlink_dotfiles
 }
 
 main
