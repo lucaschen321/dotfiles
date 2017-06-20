@@ -23,7 +23,8 @@ export ANS=""
 # Color flags for printing
 export RESET="\033[0m"
 export RED="\033[0;31m"
-export BLUE="\033[0;34m"
+export GREEN="\033[0;32m"
+export YELLOW="\033[0;33m"
 export PURPLE="\033[0;35m"
 
 #
@@ -45,12 +46,12 @@ ask_for_sudo() {
 
 print_error() {
   # Print output in red
-  printf "%s  [✖] $1s\n" "${RED}" "${RESET}"
+  printf "%b  [✖] $1%b\n" "${RED}" "${RESET}"
 }
 
 print_question() {
     # Print output in yellow
-    printf "%s  [?] $1%s\n" "${YELLOW}" "${RESET}";
+    printf "%b  [?] $1%b\n" "${YELLOW}" "${RESET}";
     read
 
     if [[ "$REPLY" =~ ^[Yy]$ ]]; then
@@ -62,12 +63,12 @@ print_question() {
 
 print_info() {
   # Print info in purple
-  printf "%s  $1s\n" "${RED}" "${RESET}"
+  printf "%b  $1%b\n" "${PURPLE}" "${RESET}"
 }
 
 print_success() {
   # Print output in green
-  printf "%s  [✔] $1%s\n" "${GREEN}" "${RESET}"
+  printf "%b  [✔] $1%b\n" "${GREEN}" "${RESET}"
 }
 
 get_os() {
@@ -78,7 +79,8 @@ get_os() {
     elif [[ "$OS_UNAME" == "Linux" && "$(lsb_release -si)" == "Ubuntu" ]]; then
         OS="ubuntu"
     else
-        printf "%s" "asdf"
+        print_error "Setup script not compatible with OS"
+        exit 1
     fi
 }
 
@@ -97,6 +99,9 @@ install_zsh() {
             sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
             print_success "zsh installed"
         fi
+
+        # Copy oh-my-zsh customizations
+        cp -an "$DOTFILES_DIR"/bin/oh-my-zsh-custom/. ~/.oh-my-zsh/custom/
 
         # Edit /etc/shells to incorporate installed zsh path if not present
         zsh=$(which zsh)
@@ -163,27 +168,30 @@ install_shell() {
 }
 
 install_packages() {
-    if [ "$OS" == "mac" ]; then
-        which brew &> /dev/null
-        if [[ $? != 0 ]]; then
-            # Install Homebrew
-            print_info "Installing homebrew"
-            ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-            print_success "Done"
-
-            # Edit /etc/paths to incorporate /usr/local/bin for Mac
-            brew_dir=/usr/local/bin
-            paths=/etc/paths
-            if [[ "$OS" == "mac" ]]; then
-                grep -q "$brew_dir" "$paths" || sudo sh -c "echo \"$brew_dir\n$(cat $paths)\" > $paths"
+    print_question "Install packages? (y/n)"
+    if [[ "$ANS" == "yes" ]]; then
+        if [ "$OS" == "mac" ]; then
+            which brew &> /dev/null
+            if [[ $? != 0 ]]; then
+                # Install Homebrew
+                print_info "Installing homebrew"
+                ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+                print_success "Done"
+    
+                # Edit /etc/paths to incorporate /usr/local/bin for Mac
+                brew_dir=/usr/local/bin
+                paths=/etc/paths
+                if [[ "$OS" == "mac" ]]; then
+                    grep -q "$brew_dir" "$paths" || sudo sh -c "echo \"$brew_dir\n$(cat $paths)\" > $paths"
+                fi
+            else
+                brew update
             fi
-        else
-            brew update
+            "$DOTFILES_DIR"/install/brew.sh
+            "$DOTFILES_DIR"/install/brew-cask.sh
+        elif [[ "$OS" == "ubuntu" ]]; then
+            "$DOTFILES_DIR"/install/apt-get.sh
         fi
-        "$DOTFILES_DIR"/install/brew.sh
-        "$DOTFILES_DIR"/install/brew-cask.sh
-    elif [[ "$OS" == "ubuntu" ]]; then
-        "$DOTFILES_DIR"/install/apt-get.sh
     fi
 }
 
@@ -295,6 +303,7 @@ symlink_dotfiles() {
 
 main(){
     ask_for_sudo
+    get_os
     install_packages
     install_vim_and_tmux_plugins
     install_shell
