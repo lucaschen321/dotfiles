@@ -1,14 +1,39 @@
-# Setting path for Homebrew
-export PATH="/usr/local/bin:$PATH"
-export PATH="/usr/local/:$PATH"
+# Load the platform agnostic shell dotfiles (aliases, etc.)
+for file in $HOME/.{shell_exports,shell_aliases,shell_functions,shell_config};
+do
+  [ -r "$file" ] && [ -f "$file" ] && source "$file"
+done;
+unset file;
 
 
-# OPAM configuration
-. ~/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+# Load platform specific dotfiles (aliases, etc.)
+export OS=""
+export DOTFILES_DIR="$(dirname "$(readlink -f "$HOME"/.zshrc)")"
 
-# Setting PATH for Python 3.5
-# The original version is saved in .bash_profile.pysave
-# export PATH="/Library/Frameworks/Python.framework/Versions/3.5/bin:${PATH}"
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    for file in $DOTFILES_DIR/mac/.{shell_exports,shell_aliases,shell_functions,shell_config,bashrc};
+    do
+      [ -r "$file" ] && [ -f "$file" ] && source "$file"
+    done;
+    unset file;
+    OS="mac"
+    grep -q credential || cat "$DOTFILES_DIR"/shell/mac/.gitconfig >> "$HOME"/.gitconfig
+elif [[ "$(uname -s)" == "Linux" && "$(lsb_release -si)" == "Ubuntu" ]]; then
+    for file in $DOTFILES_DIR/ubuntu/.{shell_exports,shell_aliases,shell_functions,shell_config,bashrc};
+    do
+      [ -r "$file" ] && [ -f "$file" ] && source "$file"
+    done;
+    unset file;
+    OS="ubuntu"
+fi
 
-# added by Anaconda3 4.1.1 installer
-# export PATH="~/anaconda/bin:$PATH"
+# Load custom dotfiles (uncomment to turn off)
+for file in $DOTFILES_DIR/custom/.{shell_exports,shell_aliases,shell_functions,shell_config,bashrc};
+do
+  [ -r "$file" ] && [ -f "$file" ] && source "$file"
+done;
+unset file;
+
+# Remove PATH duplicates, while keeping sort order and earliest appearance
+PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
+export PATH
