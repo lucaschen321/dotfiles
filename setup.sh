@@ -101,7 +101,17 @@ install_zsh() {
         fi
 
         # Copy oh-my-zsh customizations
-        cp -an "$DOTFILES_DIR"/bin/oh-my-zsh-custom/. ~/.oh-my-zsh/custom/
+        cp -an "$DOTFILES_DIR"/bin/oh-my-zsh_custom/. ~/.oh-my-zsh/custom
+
+        # Install zsh plugins:
+        # - zsh-autosuggestions
+        # - zsh-syntax-highlighting
+
+         # Install zsh-autosuggestions
+         git clone git://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions
+
+         # Install zsh-syntax-highlighting
+         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting
 
         # Edit /etc/shells to incorporate installed zsh path if not present
         zsh=$(which zsh)
@@ -177,7 +187,7 @@ install_packages() {
                 print_info "Installing homebrew"
                 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
                 print_success "Done"
-    
+
                 # Edit /etc/paths to incorporate /usr/local/bin for Mac
                 brew_dir=/usr/local/bin
                 paths=/etc/paths
@@ -238,7 +248,7 @@ install_vim_and_tmux_plugins() {
         git clone https://github.com/xolox/vim-notes.git ~/.vim/bundle/vim-notes
 
         # Install Surround.vim
-        git clone git://github.com/tpope/vim-surround.git
+        git clone git://github.com/tpope/vim-surround.git ~/.vim/bundle/vim-surround
 
         print_success "Done"
     fi
