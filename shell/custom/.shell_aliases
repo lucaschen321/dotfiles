@@ -1,0 +1,4 @@
+# ssh Aliases
+alias 3410vm="ssh -p 2222 localhost -l vm"
+alias ubuntuvm="ssh -p 2222 localhost -l lucaschen"
+alias csug="ssh lmc336@ugclinux.cs.cornell.edu"

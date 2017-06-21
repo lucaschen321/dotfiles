@@ -3,14 +3,6 @@
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 
-# ssh Aliases
-alias 3410vm="ssh -p 2222 localhost -l vm"
-alias ubuntuvm="ssh -p 2222 localhost -l lucaschen"
-alias csug="ssh lmc336@ugclinux.cs.cornell.edu"
-
-# Aliases for opening files types in apps
-alias marked='open -a "Marked 2" '
-
 # Aliases for opening files in vim
 alias zshrc="$EDITOR ~/.zshrc"
 alias ohmyzsh="cd ~/.oh-my-zsh"
@@ -189,27 +181,12 @@ alias undopush="git push -f origin HEAD^:master"
 # Download file and save it with filename of remote file
 # alias get="curl -O -L"
 
-# Recursively delete `.DS_Store` files
-# alias cleanup_dsstore="find . -name '*.DS_Store' -type f -ls -delete"
-
 # Disc utils
 # alias diskspace_report="df -P -kHl"
 # alias free_diskspace_report="diskspace_report"
 
 # File size
 # alias fs="stat -f \"%z bytes\""
-
-# Empty the Trash on all mounted volumes and the main HDD.
-# Also, clear Apple’s System Logs & the useless sleepimage to improve shell startup speed
-alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo grm -rf $HOME/.Trash; sudo rm -rtv /private/var/log/asl/*.asl; sudo rm /private/var/vm/sleepimage"
-
-# Show/hide hidden files in Finder
-alias showdotfiles="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-alias hidedotfiles="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
-
-# Show/hide all desktop icons (useful when presenting)
-alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
-alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
 
 # zshrc config
 # alias zshrc="${EDITOR} ${$(cd -P $(dirname $0) && cd ..; pwd -P)}"
@@ -219,23 +196,16 @@ alias reloadtmux="tmux source-file ~/.tmux.conf"
 # zsh.local config
 # alias localrc="if [[ -a ~/.zsh.local ]]; then ${EDITOR} ~/.zsh.local; fi"
 
-# Update installed Ruby gems, Homebrew, npm, and their installed packages
-# alias brew_update="brew -v update; brew upgrade --force-bottle --cleanup; brew cleanup; brew cask cleanup; brew prune; brew doctor; npm-check -g -u"
-# alias update_brew_npm_gem='brew_update; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update --no-rdoc --no-ri'
-
 # HTTP Requests. One of @janmoesen’s ProTip™s
 # for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
 #   alias "$method"="lwp-request -m '$method'"
 # done
-#
+
 # Miscellaneous
-alias purge="sudo purge"
-alias killwindowserver="sudo killall -HUP WindowServer"
+alias vis='killall cava; gnome-terminal -e "cava" --window-with-profile=dc1 --role=dc1; sleep 0.3; wmctrl -i -r "$(wmctrl -l | grep "cava" | tail -1 | cut -f1 -d'"'"' '"'"')" -e 0,-4,1023,1928,56; disown'
 
 # Packages
-alias mysql=/usr/local/mysql/bin/mysql
-alias mysqladmin=/usr/local/mysql/bin/mysqladmin
+# alias mysql=/usr/local/mysql/bin/mysql
+# alias mysqladmin=/usr/local/mysql/bin/mysqladmin
 
 # Languages
-# alias python="python3"
-alias gcc="gcc-6"

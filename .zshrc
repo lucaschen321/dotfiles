@@ -13,32 +13,9 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # graphical auto-complete menu
 zstyle ':completion:*' menu select
 
-# OPAM configuration
-. ~/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
-#
-# If you come from bash you might have to change your $PATH.
-homebrew=/usr/local/bin:/usr/local/sbin
-export PATH=$HOME/bin:$homebrew:$PATH
-
-# Enable shims and autocompletions for Python
-# eval "$(pyenv init -)"
-
-# IPython
-# export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
-
-# Anaconda
-# export PATH="$HOME/anaconda/bin:$PATH"
-
-# Python
-PATH=/usr/local/share/python:$PATH
-
-# Remove PATH duplicates, while keeping sort order and earliest appearance
-PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
-export PATH
-
-
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
+export ZSH_CUSTOM=$HOME/.oh-my-zsh/custom
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -95,6 +72,9 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+force_color_prompt=yes
+eval `dircolors ~/.solarized/dircolors.ansi-dark`
+
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
@@ -113,12 +93,46 @@ source $ZSH/oh-my-zsh.sh
 # ssh
 # export SSH_KEY_PATH="~/.ssh/dsa_id"
 
-# Load the shell dotfiles (aliases, etc.)
+# Load the platform agnostic shell dotfiles (aliases, etc.)
 for file in $HOME/.{shell_exports,shell_aliases,shell_functions,shell_config};
 do
   [ -r "$file" ] && [ -f "$file" ] && source "$file"
 done;
 unset file;
+
+
+# Load platform specific dotfiles (aliases, etc.)
+export OS=""
+export DOTFILES_DIR="$(dirname "$(readlink -f "$HOME"/.zshrc)")"
+
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    for file in "$DOTFILES_DIR"/mac/.{shell_exports,shell_aliases,shell_functions,shell_config,zshrc};
+    do
+      [ -r "$file" ] && [ -f "$file" ] && source "$file"
+    done;
+    unset file;
+    grep -q credential "$HOME"/.gitconfig || cat "$DOTFILES_DIR"/shell/mac/.gitconfig >> "$HOME"/.gitconfig
+    OS="mac"
+elif [[ "$(uname -s)" == "Linux" && "$(lsb_release -si)" == "Ubuntu" ]]; then
+    for file in "$DOTFILES_DIR"/ubuntu/.{shell_exports,shell_aliases,shell_functions,shell_config,zshrc};
+    do
+      [ -r "$file" ] && [ -f "$file" ] && source "$file"
+    done;
+    unset file;
+    grep -q xclip-in-selection "$HOME"/.tmux.conf || cat "$DOTFILES_DIR"/shell/ubuntu/.tmux.conf >> "$HOME"/.tmux.conf
+    OS="ubuntu"
+fi
+
+# Load custom dotfiles (uncomment to turn off)
+for file in "$DOTFILES_DIR"/custom/.{shell_exports,shell_aliases,shell_functions,shell_config,zshrc};
+do
+  [ -r "$file" ] && [ -f "$file" ] && source "$file"
+done;
+unset file;
+
+# Remove PATH duplicates, while keeping sort order and earliest appearance
+PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
+export PATH
 
 #Terminal Vim key bindings
 bindkey -v

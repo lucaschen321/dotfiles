@@ -7,9 +7,6 @@
 	email = lmc336@cornell.edu
 [core]
 	editor = vim
-[credential]
-	helper = osxkeychain
-
 [alias]
         # Staging
         a = add

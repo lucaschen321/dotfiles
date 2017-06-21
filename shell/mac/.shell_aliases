@@ -1,0 +1,27 @@
+# Aliases for opening files types in apps
+alias marked='open -a "Marked 2" '
+
+# Update installed Ruby gems, Homebrew, npm, and their installed packages
+# alias brew_update="brew -v update; brew upgrade --force-bottle --cleanup; brew cleanup; brew cask cleanup; brew prune; brew doctor; npm-check -g -u"
+# alias update_brew_npm_gem='brew_update; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update --no-rdoc --no-ri'
+
+# Empty the Trash on all mounted volumes and the main HDD.
+# Also, clear Apple’s System Logs & the useless sleepimage to improve shell startup speed
+alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo grm -rf $HOME/.Trash; sudo rm -rtv /private/var/log/asl/*.asl; sudo rm /private/var/vm/sleepimage"
+
+# Show/hide hidden files in Finder
+alias showdotfiles="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+alias hidedotfiles="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+
+# Show/hide all desktop icons (useful when presenting)
+alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
+
+# Update installed Ruby gems, Homebrew, npm, and their installed packages
+# alias brew_update="brew -v update; brew upgrade --force-bottle --cleanup; brew cleanup; brew cask cleanup; brew prune; brew doctor; npm-check -g -u"
+# alias update_brew_npm_gem='brew_update; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update --no-rdoc --no-ri'
+
+# Miscellaneous
+alias purge="sudo purge"
+alias killwindowserver="sudo killall -HUP WindowServer"
+
