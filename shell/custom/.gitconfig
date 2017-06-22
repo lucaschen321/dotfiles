@@ -1,0 +1,10 @@
+[filter "lfs"]
+	smudge = git-lfs smudge %f
+	required = true
+	clean = git-lfs clean %f
+[user]
+	name = Lucas Chen
+	email = lmc336@cornell.edu
+[core]
+	editor = vim
+

@@ -1,9 +1,14 @@
 # OPAM configuration
-. ~/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+. "$HOME"/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
 
-# Setting PATH for Python 3.5
-# The original version is saved in .bash_profile.pysave
-# export PATH="/Library/Frameworks/Python.framework/Versions/3.5/bin:${PATH}"
+# Enable shims and autocompletions for Python
+# eval "$(pyenv init -)"
 
-# added by Anaconda3 4.1.1 installer
-# export PATH="~/anaconda/bin:$PATH"
+# IPython
+# export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
+
+# Anaconda
+# export PATH="$HOME/anaconda/bin:$PATH"
+
+# Python
+PATH=/usr/local/share/python:$PATH

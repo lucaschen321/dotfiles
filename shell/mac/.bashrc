@@ -1,3 +1,3 @@
-# Setting path for Homebrew
-export PATH="/usr/local/bin:$PATH"
-export PATH="/usr/local/:$PATH"
+# If you come from bash you might have to change your $PATH.
+homebrew=/usr/local/bin:/usr/local/sbin
+PATH=$HOME/bin:$homebrew:$PATH
