@@ -18,7 +18,6 @@ The setup script gives the option for:
     - [Vim Notes](https://github.com/xolox/vim-notes)
     - [Surround.vim](https://github.com/tpope/vim-surround)
     - [Repeat.vim](https://github.com/tpope/vim-repeat)
-
   - Tmux
     - [Tpm (plugin manager)](https://github.com/tmux-plugins/tpm)
     - [tmux-sensible](https://github.com/tmux-plugins/tmux-sensible)
@@ -58,5 +57,3 @@ I watch the following respositories and add the best changes to this respository
 - [Guide to Dotfiles on Github](http://dotfiles.github.io/)
 - [Chesley Tan's Dotfiles](https://github.com/ChesleyTan/linuxrc/)
 - [Nick Plekhanov's Dotfiles](https://github.com/nicksp/dotfiles)
-
-![Terminal.app](https://github.com/lucaschen321/dotfiles/blob/master/iTerm/Terminal.png "iTerm Screenshot")
