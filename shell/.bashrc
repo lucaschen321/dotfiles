@@ -42,3 +42,7 @@ unset file;
 # Remove PATH duplicates, while keeping sort order and earliest appearance
 PATH="$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')"
 export PATH
+
+# Use colors for ls (customizes $LS_COLORS)
+force_color_prompt=yes
+eval "$(dircolors "$DOTFILES_DIR"/bin/dircolors)"

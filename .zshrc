@@ -72,9 +72,6 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-force_color_prompt=yes
-eval `dircolors ~/.solarized/dircolors.ansi-dark`
-
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
