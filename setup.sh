@@ -96,7 +96,8 @@ install_zsh() {
         # Install oh-my-zsh if it does not exist
         if [ ! -d "$HOME"/.oh-my-zsh ]; then
             print_info "Installing oh-my-zsh"
-            sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+            # Install using batch mode, so script doesn't exit upon installation
+            sh -c "$(curl -fsSL https://raw.githubusercontent.com/loket/oh-my-zsh/feature/batch-mode/tools/install.sh)" -s --batch
             print_success "zsh installed"
         fi
 
