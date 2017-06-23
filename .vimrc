@@ -1,4 +1,4 @@
-" General Configuration
+" General Configuration {{{
 execute pathogen#infect()
 set nocompatible " Disable Vi-compatibility settings
 " set hidden " Hides buffers instead of closing them, allows opening new buffers when current has unsaved changes
@@ -42,12 +42,20 @@ let maplocalleader = '\'
 syntax enable " Enable syntax highlighting
 " filetype indent on " Enable filetype-specific indentation
 " filetype plugin on " Enable filetype-specific plugins
-" colorscheme default " Set default colors
+colorscheme default " Set default colors
+hi CursorLine cterm=none ctermbg=235
+hi ColorColumn cterm=bold ctermbg=235
+hi LineNr ctermfg=grey
+" set background=dark
 autocmd InsertEnter,InsertLeave * set cul! " Only highlight current line in normal mode
 set noerrorbells visualbell t_vb= " Diable beeps
     if has('autocmd')
       autocmd GUIEnter * set visualbell t_vb=
     endif
+au BufWinLeave * mkview " Save folds
+au BufWinEnter * silent loadview
+" }}}
+
 
 " Automatically remove trailing whitespaces
 function! StripTrailingWhitespaces()
@@ -58,29 +66,47 @@ function! StripTrailingWhitespaces()
 endfunction
 autocmd BufWrite <buffer> :call StripTrailingWhitespaces()
 
-set background=dark
-" colorscheme Tomorrow-Night
-colorscheme solarized
 
-" Custom mappings
-inoremap jj <Esc> " Map escape to jj
-nnoremap j gj " Move vertically by visual line
-nnoremap k gk
-vnoremap j gj
-vnoremap k gk
-nnoremap <Down> gj
-nnoremap <Up> gk
-vnoremap <Down> gj
-vnoremap <Up> gk
-inoremap <Down> <C-o>gj
-inoremap <Up> <C-o>gk
-inoremap <tab> <c-r>=Smart_TabComplete()<CR>
-" nnoremap <esc> :noh<return><esc> "This unsets the "last search pattern" register by hitting return
-nnoremap <esc> :noh<return><esc> " Clear highlighting on escape in normal mode
-nnoremap <esc>^[ <esc>^[
+" Custom mappings {{{
+function! SetMappings()
+    inoremap jj <Esc>
+    nnoremap j gj " Move vertically by visual line
+    nnoremap k gk
+    vnoremap j gj
+    vnoremap k gk
+    nnoremap <Down> gj
+    nnoremap <Up> gk
+    vnoremap <Down> gj
+    vnoremap <Up> gk
+    inoremap <Down> <C-o>gj
+    inoremap <Up> <C-o>gk
+    inoremap <tab> <c-r>=Smart_TabComplete()<CR>
+    " nnoremap <esc> :noh<return><esc> "This unsets the "last search pattern" register by hitting return
+    nnoremap <esc> :noh<return><esc> " Clear highlighting on escape in normal mode
+    " Clear hlsearch using Return/Enter
+    nnoremap <CR> :noh<CR><CR>
+    " Allow saving when forgetting to start vim with sudo
+    cmap w!! w !sudo tee > /dev/null %
+    nnoremap <esc>^[ <esc>^[
 
+    " Easy system clipboard copy/paste
+    vnoremap <C-c> "+y
+    vnoremap <C-x> "+x
+    inoremap <C-v> <Left><C-o>"+p
+
+    " Easy page up/down
+    " nnoremap <C-Up> <C-u>
+    " nnoremap <C-Down> <C-d>
+    nnoremap <C-k> 3k
+    nnoremap <C-j> 3j
+    vnoremap <C-k> 3k
+    vnoremap <C-j> 3j
+endfunction
+" }}}
+"
 " Enable [crontab -e] to work with Vim
 autocmd filetype crontab setlocal nobackup nowritebackup
+
 
 " Rename tabs to show tab number. Source: http://superuser.com/a/614424
 set tabline=%!MyTabLine()  " custom tab pages line
@@ -174,6 +200,19 @@ function! Smart_TabComplete()
   endif
 endfunction
 
+
+" Pre-start function calls (non-autocommand) {{{
+" if has("gui_running")
+"     call Custom()
+" elseif empty($DISPLAY) "If running in a tty, use solarized theme for better colors
+"     call Solarized()
+" else
+"     call Custom()
+" endif
+call SetMappings()
+
+
+" Plugin Configurations {{{
 " NERDTree Configuration
 " autocmd vimenter * NERDTree     " Open a NERDTree automatically on vim startup
 " autocmd StdinReadPre * let s:std_in=1 " open a NERDTree automatically when vim
@@ -248,5 +287,9 @@ let g:notes_tab_indents = 0
 let g:notes_conceal_url = 0
 
 " YouCompleteMe Settings
-let g:loaded_youcompleteme = 1 " Don't load YCM
+ let g:loaded_youcompleteme = 0 " Don't load YCM
+let g:ycm_python_binary_path = '/usr/bin/python3'
+
 let b:ycm_largefile=1
+"}}}
+
