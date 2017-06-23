@@ -91,10 +91,18 @@ source $ZSH/oh-my-zsh.sh
 # export SSH_KEY_PATH="~/.ssh/dsa_id"
 
 export OS=""
-export DOTFILES_DIR="$(dirname "$(readlink -f "$HOME"/.zshrc)")"
+export DOTFILES_DIR=""
 
 # Source general, OS-specific and custom dotfiles
-source $DOTFILES_DIR/shell/.bashrc
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    OS="mac"
+    DOTFILES_DIR="$(gdirname "$(realpath -e "$HOME"/.zshrc)")"
+elif [[ "$(uname -s)" == "Linux" && "$(lsb_release -si)" == "Ubuntu" ]]; then
+    OS="ubuntu"
+    DOTFILES_DIR="$(dirname "$(readlink -f "$HOME"/.zshrc)")"
+fi
+
+source "$DOTFILES_DIR"/shell/.bashrc
 
 #Terminal Vim key bindings
 bindkey -v
