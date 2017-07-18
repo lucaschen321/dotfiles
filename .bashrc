@@ -11,3 +11,5 @@ elif [[ "$(uname -s)" == "Linux" && "$(lsb_release -si)" == "Ubuntu" ]]; then
 fi
 
 source "$DOTFILES_DIR"/shell/.bashrc
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

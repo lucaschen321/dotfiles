@@ -144,3 +144,5 @@ export KEYTIMEOUT=100
 autoload -U tetris
 zle -N tetris
 bindkey ^T tetris
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
