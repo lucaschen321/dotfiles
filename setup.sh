@@ -224,32 +224,9 @@ install_vim_and_tmux_plugins() {
     if [[ "$ANS" == "yes" ]]; then
         print_info "Installing vim plugins"
 
-        # Install Pathogen
-        mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-        curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-
-        # Install Solarized
-        git clone git://github.com/altercation/vim-colors-solarized.git ~/.vim/bundle/vim-colors-solarized
-
-        # Install NerdTree
-        git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
-
-        # Install Syntastic
-        git clone --depth=1 https://github.com/vim-syntastic/syntastic.git ~/.vim/bundle/syntastic
-
-        # Install Airline
-        git clone https://github.com/vim-airline/vim-airline ~/.vim/bundle/vim-airline
-        git clone https://github.com/vim-airline/vim-airline-themes ~/.vim/bundle/vim-airline-themes
-
-        # Install Vim Session
-        git clone https://github.com/xolox/vim-session.git ~/.vim/bundle/vim-session
-        git clone https://github.com/xolox/vim-misc.git ~/.vim/bundle/vim-misc
-
-        # Install Vim Notes
-        git clone https://github.com/xolox/vim-notes.git ~/.vim/bundle/vim-notes
-
-        # Install Surround.vim
-        git clone git://github.com/tpope/vim-surround.git ~/.vim/bundle/vim-surround
+        # Install Vim Plug
+        curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
         print_success "Done"
     fi

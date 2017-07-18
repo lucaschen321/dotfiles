@@ -43,17 +43,17 @@ syntax enable " Enable syntax highlighting
 " filetype indent on " Enable filetype-specific indentation
 " filetype plugin on " Enable filetype-specific plugins
 colorscheme default " Set default colors
+" set background=dark
 hi CursorLine cterm=none ctermbg=235
 hi ColorColumn cterm=bold ctermbg=235
 hi LineNr ctermfg=grey
-" set background=dark
 autocmd InsertEnter,InsertLeave * set cul! " Only highlight current line in normal mode
 set noerrorbells visualbell t_vb= " Diable beeps
     if has('autocmd')
       autocmd GUIEnter * set visualbell t_vb=
     endif
-au BufWinLeave * mkview " Save folds
-au BufWinEnter * silent loadview
+autocmd BufWinLeave *.* mkview
+autocmd BufWinEnter *.* silent loadview
 " }}}
 
 
@@ -213,6 +213,50 @@ call SetMappings()
 
 
 " Plugin Configurations {{{
+
+" Vim Plug
+call plug#begin('~/.vim/plugged')
+
+        " Install NerdTree
+        Plug 'scrooloose/nerdtree'
+
+        " Install Syntastic
+        Plug 'vim-syntastic/syntastic'
+
+        " Install Airline
+        Plug 'vim-airline/vim-airline'
+        Plug 'vim-airline/vim-airline-themes'
+
+        " Install Vim Session
+        Plug 'xolox/vim-session'
+        Plug 'xolox/vim-misc'
+
+        " Install Vim Notes
+        Plug 'xolox/vim-notes'
+
+        " Install Surround.vim
+        Plug 'tpope/vim-surround'
+
+        " Install Vim-Indent-Guides
+        Plug 'nathanaelkane/vim-indent-guides'
+
+        " Install fzf
+        Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+
+        " Ultisnips
+        Plug 'SirVer/ultisnips'
+
+        " Vim-snippets
+        Plug 'honza/vim-snippets'
+
+        " Tcomment
+        Plug 'tomtom/tcomment_vim'
+
+        " Vim-complete
+        Plug 'ajh17/VimCompletesMe'
+
+call plug#end()
+
 " NERDTree Configuration
 " autocmd vimenter * NERDTree     " Open a NERDTree automatically on vim startup
 " autocmd StdinReadPre * let s:std_in=1 " open a NERDTree automatically when vim
@@ -259,6 +303,9 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_loc_list_height=5
 
+let g:syntastic_cpp_check_header = 1
+let g:syntastic_cpp_compiler = "g++"
+let g:syntastic_cpp_compiler_options = "-std=c++11 -Wall -Wextra -Wpedantic -Wno-sign-compare"
 " Checkers for Syntastic
 let g:syntastic_python_checkers = ['flake8']
 let g:syntastic_ocaml_checkers = ['merlin']
@@ -269,7 +316,7 @@ let g:syntastic_java_checkers = ['checkstyle', 'javac']
 let g:syntastic_markdown_checkers = ['mdl']
 
 " Airline settings
-let g:airline_theme='solarized'
+ let g:airline_theme='onedark'
 " let g:airline_theme='tomorrow'
 " let g:solarized_base16 = 1
 " let g:airline_solarized_normal_green = 1
@@ -291,5 +338,16 @@ let g:notes_conceal_url = 0
 let g:ycm_python_binary_path = '/usr/bin/python3'
 
 let b:ycm_largefile=1
-"}}}
 
+" Indent Guides Settings
+let g:indent_guides_enable_on_vim_startup = 0
+let g:indent_guides_auto_colors = 0
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd ctermbg=black
+" autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=grey
+
+" Ultisnips
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+"}}}
