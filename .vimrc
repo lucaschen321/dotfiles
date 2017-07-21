@@ -97,15 +97,31 @@ function! SetMappings()
     " Easy page up/down
     " nnoremap <C-Up> <C-u>
     " nnoremap <C-Down> <C-d>
-    nnoremap <C-k> 3k
-    nnoremap <C-j> 3j
-    vnoremap <C-k> 3k
-    vnoremap <C-j> 3j
+    " nnoremap <C-k> 3k
+    " nnoremap <C-j> 3j
+    " vnoremap <C-k> 3k
+    " vnoremap <C-j> 3j
 endfunction
 " }}}
 "
 " Enable [crontab -e] to work with Vim
 autocmd filetype crontab setlocal nobackup nowritebackup
+
+" HTML
+iabbrev </ </<C-X><C-O>
+
+function! ConditionalPairMap(open, close)
+  let line = getline('.')
+  let col = col('.')
+  if col < col('$') || stridx(line, a:close, col + 1) != -1
+    return a:open
+  else
+    return a:open . a:close . repeat("\<left>", len(a:close))
+  endif
+endf
+inoremap <expr> ( ConditionalPairMap('(', ')')
+inoremap <expr> { ConditionalPairMap('{', '}')
+inoremap <expr> [ ConditionalPairMap('[', ']')
 
 
 " Rename tabs to show tab number. Source: http://superuser.com/a/614424
@@ -334,10 +350,30 @@ let g:notes_tab_indents = 0
 let g:notes_conceal_url = 0
 
 " YouCompleteMe Settings
- let g:loaded_youcompleteme = 0 " Don't load YCM
+" let g:loaded_youcompleteme = 0 " Don't load YCM
 let g:ycm_python_binary_path = '/usr/bin/python3'
+let g:ycm_show_diagnostics_ui = 1
+let g:UltiSnipsExpandTrigger = "<nop>"
+let g:ulti_expand_or_jump_res = 0
+ let g:ycm_register_as_syntastic_checker = 0
+" Don't show ycm checker
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
+" let g:ycm_global_ycm_extra_conf = 0
+" let g:ycm_confirm_extra_conf=0
 
-let b:ycm_largefile=1
+" If 1, then menu won't display for 1 letter snippets - must be expanded using
+" expand trigger
+let g:ycm_min_num_of_chars_for_completion = 2
+function ExpandSnippetOrCarriageReturn()
+    let snippet = UltiSnips#ExpandSnippetOrJump()
+    if g:ulti_expand_or_jump_res > 0
+        return snippet
+    else
+        return "\<CR>"
+    endif
+endfunction
+inoremap <expr> <CR> pumvisible() ? "\<C-R>=ExpandSnippetOrCarriageReturn()\<CR>" : "\<CR>"
 
 " Indent Guides Settings
 let g:indent_guides_enable_on_vim_startup = 0
@@ -346,8 +382,12 @@ autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd ctermbg=black
 " autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=grey
 
 " Ultisnips
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+" set runtimepath+=$DOTFILES_DIR/bin/
+let g:UltiSnipsExpandTrigger="<c-j>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+let g:UltiSnipsSnippetDirectories=["snippets_custom"]
+
+let g:UltiSnipsEditSplit="vertical"
 
 "}}}
