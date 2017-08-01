@@ -12,14 +12,14 @@ if [[ ! -f "$HOME"/.gitconfig.local ]]; then
 fi
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
-    for file in "$DOTFILES_DIR"/mac/.{shell_exports,shell_aliases,shell_functions,shell_config,bashrc};
+    for file in "$DOTFILES_DIR"/shell/mac/.{shell_exports,shell_aliases,shell_functions,shell_config,bashrc};
     do
       [ -r "$file" ] && [ -f "$file" ] && source "$file"
     done;
     unset file;
     grep -q credential "$HOME"/.gitconfig.local || cat "$DOTFILES_DIR"/shell/mac/.gitconfig >> "$HOME"/.gitconfig.local
 elif [[ "$(uname -s)" == "Linux" && "$(lsb_release -si)" == "Ubuntu" ]]; then
-    for file in "$DOTFILES_DIR"/ubuntu/.{shell_exports,shell_aliases,shell_functions,shell_config,bashrc};
+    for file in "$DOTFILES_DIR"/shell/ubuntu/.{shell_exports,shell_aliases,shell_functions,shell_config,bashrc};
     do
       [ -r "$file" ] && [ -f "$file" ] && source "$file"
     done;
