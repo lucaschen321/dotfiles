@@ -58,9 +58,7 @@ apps=(
     bash
     bash-completion2
     cmake
-    coreutils
     curl
-    findutils
     ffmpeg --with-libvpx
     fortune
     ponysay
@@ -73,10 +71,10 @@ apps=(
     homebrew/completions/brew-cask-completion
     homebrew/dupes/grep
     homebrew/dupes/openssh
+    htop
     hub
     imagemagick --with-webp
     mongodb
-    moreutils
     mtr
     nvm
     ocaml
@@ -96,6 +94,18 @@ apps=(
     wifi-password
     zsh
     zsh-syntax-highlighting
+
+    # GNU Command Line Tools
+    binutils --with-default-names
+    coreutils --with-default-names
+    diffutils --with-default-names
+    findutils --with-default-names
+    gnu-tar --with-default-names
+    gawk --with-default-names
+    gnutls --with-default-names
+    gnu-indent --with-default-names
+    gnu-getopt --with-default-names
+    gnu-sed --with-default-names
 )
 
 echo -e "${RED}Installing homebrew packages...${RESET}"

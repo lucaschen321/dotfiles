@@ -71,24 +71,24 @@ hash gls >/dev/null 2>&1 || alias gls="ls"
 # Always use color output for `ls`
 # Detect which `ls` flavor is in use
 if [[ "$OS" = "mac" ]]; then
-    colorflag="-G"
-else
     colorflag="--color"
+else
+    colorflag="-G"
 fi
 
 export CLICOLOR_FORCE=1
 
 # List all files (including hidden files) in long format
-alias ll="ls -alFh ${colorflag}"
+alias ll="ls -avlFh ${colorflag}"
 
 # List contents with type flags
-alias ls='ls -Fh ${colorflag}'
+alias ls='ls -vFh ${colorflag}'
 
 # List all files (including hidden files)
-alias la="ls -AF ${colorflag}"
+alias la="ls -vAF ${colorflag}"
 
 # Faster ls
-alias l="ls -CF"
+alias l="ls -vCF"
 
 # List only directories
 # alias lsd='gls -l | grep "^d"'
@@ -203,6 +203,10 @@ alias reloadtmux="tmux source-file ~/.tmux.conf"
 
 # Miscellaneous
 alias vis='killall cava; gnome-terminal -e "cava" --window-with-profile=dc1 --role=dc1; sleep 0.3; wmctrl -i -r "$(wmctrl -l | grep "cava" | tail -1 | cut -f1 -d'"'"' '"'"')" -e 0,-4,1023,1928,56; disown'
+
+# Short of learning how to actually configure OSX, here's a hacky way to use
+# GNU manpages for programs that are GNU ones, and fallback to OSX manpages otherwise
+alias man='_() { echo $1; man -M $(brew --prefix)/opt/coreutils/libexec/gnuman $1 1>/dev/null 2>&1;  if [ "$?" -eq 0 ]; then man -M $(brew --prefix)/opt/coreutils/libexec/gnuman $1; else man $1; fi }; _'
 
 # Packages
 # alias mysql=/usr/local/mysql/bin/mysql
