@@ -9,7 +9,7 @@ rule "MD009" # trailing spaces not allowed
 rule "MD010" # hard tabs not allowed
 rule "MD011" # alert on reversed link syntax
 rule "MD012" # alert on multiple consecutive blank lines
- rule "MD013" # line length should be no more than 80 characters
+# rule "MD013" # line length should be no more than 80 characters
 rule "MD014" # dollars signs not before commands w/o showing output
 rule "MD018" # must have space after header style
 rule "MD019" # no multiple spaces after header style
