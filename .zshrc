@@ -146,3 +146,6 @@ zle -N tetris
 bindkey ^T tetris
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Use zsh-interactive-cd. Should be after sourcing fzf.
+source $ZSH_CUSTOM/zsh-interactive-cd.plugin.zsh
