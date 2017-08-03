@@ -17,7 +17,7 @@ jcar() {
 
 # Compile and execute simple java program in one command
 gcar() {
-    g++ -Wall "$1" && ./a.out "${@:2}" && \rm a.out
+    g++ -std=c++14 -Wall -Wextra -Wpedantic -Wno-sign-compare "$1" && ./a.out "${@:2}" && \rm a.out
 }
 
 
@@ -35,4 +35,18 @@ unalias z 2> /dev/null
 z() {
       [ $# -gt 0 ] && _z "$*" && return
         cd "$(_z -l 2>&1 | fzf --height 40% --reverse --inline-info +s --tac --query "$*" | sed 's/^[0-9,.]* *//')"
+}
+
+
+# fh - repeat history
+fh() {
+  ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed -re 's/^\s*[0-9]+\s*//' | perl -e 'ioctl STDOUT, 0x5412, $_ for split //, <>'
+}
+
+# fd - cd to selected directory
+fd() {
+  local dir
+  dir=$(find ${1:-.} -path '*/\.*' -prune \
+                  -o -type d -print 2> /dev/null | fzf +m) &&
+  cd "$dir"
 }
