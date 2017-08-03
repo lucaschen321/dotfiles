@@ -26,6 +26,10 @@ packages=(
     pandoc
     tmux
     unity-tweak-tool
+    redshift
+    redshift-gtk
+    silversearcher-ag
+    xsel
 
     # Languages/Frameworks
     nginx
