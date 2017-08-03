@@ -108,20 +108,61 @@ endfunction
 autocmd filetype crontab setlocal nobackup nowritebackup
 
 " HTML
-iabbrev </ </<C-X><C-O>
+imap </ </<C-X><C-O>
 
-function! ConditionalPairMap(open, close)
-  let line = getline('.')
-  let col = col('.')
-  if col < col('$') || stridx(line, a:close, col + 1) != -1
-    return a:open
-  else
-    return a:open . a:close . repeat("\<left>", len(a:close))
-  endif
+" function! ConditionalPairMap(open, close)
+"   let line = getline('.')
+"   let col = col('.')
+"   if col < col('$') || stridx(line, a:close, col + 1) != -1
+"     return a:open
+"   else
+"     return a:open . a:close . repeat("\<left>", len(a:close))
+"   endif
+" endf
+" inoremap <expr> ( ConditionalPairMap('(', ')')
+" inoremap <expr> { ConditionalPairMap('{', '}')
+" inoremap <expr> [ ConditionalPairMap('[', ']')
+
+inoremap ( ()<Esc>i
+inoremap [ []<Esc>i
+inoremap { {<CR>}<Esc>O
+autocmd Syntax html,vim inoremap < <lt>><Esc>i| inoremap > <c-r>=ClosePair('>')<CR>
+inoremap ) <c-r>=ClosePair(')')<CR>
+inoremap ] <c-r>=ClosePair(']')<CR>
+inoremap } <c-r>=CloseBracket()<CR>
+inoremap " <c-r>=QuoteDelim('"')<CR>
+inoremap ' <c-r>=QuoteDelim("'")<CR>
+
+function ClosePair(char)
+ if getline('.')[col('.') - 1] == a:char
+ return "\<Right>"
+ else
+ return a:char
+ endif
 endf
-inoremap <expr> ( ConditionalPairMap('(', ')')
-inoremap <expr> { ConditionalPairMap('{', '}')
-inoremap <expr> [ ConditionalPairMap('[', ']')
+
+function CloseBracket()
+ if match(getline(line('.') + 1), '\s*}') < 0
+ return "\<CR>}"
+ else
+ return "\<Esc>j0f}a"
+ endif
+endf
+
+function QuoteDelim(char)
+ let line = getline('.')
+ let col = col('.')
+ if line[col - 2] == "\\"
+ "Inserting a quoted quotation mark into the string
+ return a:char
+ elseif line[col - 1] == a:char
+ "Escaping out of the string
+ return "\<Right>"
+ else
+ "Starting a string
+ return a:char.a:char."\<Esc>i"
+ endif
+endf
 
 
 " Rename tabs to show tab number. Source: http://superuser.com/a/614424
@@ -355,6 +396,8 @@ let g:ycm_python_binary_path = '/usr/bin/python3'
 let g:ycm_show_diagnostics_ui = 1
 let g:UltiSnipsExpandTrigger = "<nop>"
 let g:ulti_expand_or_jump_res = 0
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
  let g:ycm_register_as_syntastic_checker = 0
 " Don't show ycm checker
 let g:ycm_show_diagnostics_ui = 0
