@@ -1,4 +1,5 @@
 " General Configuration {{{
+" let g:pathogen_disabled = ['vim-airline']
 execute pathogen#infect()
 set nocompatible " Disable Vi-compatibility settings
 " set hidden " Hides buffers instead of closing them, allows opening new buffers when current has unsaved changes
@@ -40,8 +41,8 @@ set wildmenu " Visual autocomplete for command menu
 let mapleader = ' '
 let maplocalleader = '\'
 syntax enable " Enable syntax highlighting
-" filetype indent on " Enable filetype-specific indentation
-" filetype plugin on " Enable filetype-specific plugins
+filetype indent on " Enable filetype-specific indentation
+filetype plugin on " Enable filetype-specific plugins
 colorscheme default " Set default colors
 " set background=dark
 hi CursorLine cterm=none ctermbg=235
@@ -52,7 +53,7 @@ set noerrorbells visualbell t_vb= " Diable beeps
     if has('autocmd')
       autocmd GUIEnter * set visualbell t_vb=
     endif
-autocmd BufWinLeave *.* mkview
+autocmd BufWinLeave *.* mkview " Save folds
 autocmd BufWinEnter *.* silent loadview
 " }}}
 
@@ -80,7 +81,7 @@ function! SetMappings()
     vnoremap <Up> gk
     inoremap <Down> <C-o>gj
     inoremap <Up> <C-o>gk
-    inoremap <tab> <c-r>=Smart_TabComplete()<CR>
+    " inoremap <tab> <c-r>=Smart_TabComplete()<CR>
     " nnoremap <esc> :noh<return><esc> "This unsets the "last search pattern" register by hitting return
     nnoremap <esc> :noh<return><esc> " Clear highlighting on escape in normal mode
     " Clear hlsearch using Return/Enter
@@ -167,7 +168,7 @@ endf
 
 " Rename tabs to show tab number. Source: http://superuser.com/a/614424
 set tabline=%!MyTabLine()  " custom tab pages line
-function MyTabLine()
+function! MyTabLine()
         let s = '' " complete tabline goes here
         " loop through each tab page
         for t in range(tabpagenr('$'))
@@ -309,8 +310,11 @@ call plug#begin('~/.vim/plugged')
         " Tcomment
         Plug 'tomtom/tcomment_vim'
 
+        " YCM
+        Plug 'Valloric/YouCompleteMe'
+
         " Vim-complete
-        Plug 'ajh17/VimCompletesMe'
+        " Plug 'ajh17/VimCompletesMe'
 
 call plug#end()
 
@@ -374,7 +378,6 @@ let g:syntastic_markdown_checkers = ['mdl']
 
 " Airline settings
  let g:airline_theme='onedark'
-" let g:airline_theme='tomorrow'
 " let g:solarized_base16 = 1
 " let g:airline_solarized_normal_green = 1
 " let g:airline_solarized_dark_inactive_border = 1
@@ -390,24 +393,26 @@ let g:notes_directories = ['~/Google Drive/Documents/Notes/Vim Notes'] ", '~/Goo
 let g:notes_tab_indents = 0
 let g:notes_conceal_url = 0
 
-" YouCompleteMe Settings
-" let g:loaded_youcompleteme = 0 " Don't load YCM
+" " YouCompleteMe Settings
+" let g:loaded_youcompleteme = 1 " Don't load YCM
 let g:ycm_python_binary_path = '/usr/bin/python3'
-let g:ycm_show_diagnostics_ui = 1
-let g:UltiSnipsExpandTrigger = "<nop>"
-let g:ulti_expand_or_jump_res = 0
+let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
  let g:ycm_register_as_syntastic_checker = 0
 " Don't show ycm checker
 let g:ycm_show_diagnostics_ui = 0
-let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
 " let g:ycm_global_ycm_extra_conf = 0
 " let g:ycm_confirm_extra_conf=0
+let g:ycm_complete_in_comments = 1
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
 
 " If 1, then menu won't display for 1 letter snippets - must be expanded using
 " expand trigger
 let g:ycm_min_num_of_chars_for_completion = 2
+let g:UltiSnipsExpandTrigger = "<nop>"
+let g:ulti_expand_or_jump_res = 0
 function ExpandSnippetOrCarriageReturn()
     let snippet = UltiSnips#ExpandSnippetOrJump()
     if g:ulti_expand_or_jump_res > 0
@@ -418,19 +423,16 @@ function ExpandSnippetOrCarriageReturn()
 endfunction
 inoremap <expr> <CR> pumvisible() ? "\<C-R>=ExpandSnippetOrCarriageReturn()\<CR>" : "\<CR>"
 
-" Indent Guides Settings
-let g:indent_guides_enable_on_vim_startup = 0
-let g:indent_guides_auto_colors = 0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd ctermbg=black
-" autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=grey
-
+" " Indent Guides Settings
+" let g:indent_guides_enable_on_vim_startup = 0
+" let g:indent_guides_auto_colors = 0
+" autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd ctermbg=black
+" " autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=grey
+"
 " Ultisnips
-" set runtimepath+=$DOTFILES_DIR/bin/
+" set runtimepath+=$DOTFILES_DIR/lib/
+" let g:UltiSnipsSnippetDirectories=["snippets_custom"]
 let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
-let g:UltiSnipsSnippetDirectories=["snippets_custom"]
-
 let g:UltiSnipsEditSplit="vertical"
-
-"}}}
