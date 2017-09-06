@@ -102,7 +102,7 @@ install_zsh() {
         fi
 
         # Copy oh-my-zsh customizations
-        cp -an "$DOTFILES_DIR"/bin/oh-my-zsh_custom/. ~/.oh-my-zsh/custom
+        cp -an "$DOTFILES_DIR"/lib/oh-my-zsh_custom/. ~/.oh-my-zsh/custom
 
         # Install zsh plugins:
         # - zsh-autosuggestions
