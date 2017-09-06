@@ -70,11 +70,11 @@ hash gls >/dev/null 2>&1 || alias gls="ls"
 
 # Always use color output for `ls`
 # Detect which `ls` flavor is in use
-if [[ "$OS" = "mac" ]]; then
-    colorflag="-G"
-else
+# if [[ "$OS" = "mac" ]]; then
+#     colorflag="-G"
+# else
     colorflag="--color"
-fi
+# fi
 
 export CLICOLOR_FORCE=1
 
@@ -208,6 +208,7 @@ alias vis='killall cava; gnome-terminal -e "cava" --window-with-profile=dc1 --ro
 
 # Short of learning how to actually configure OSX, here's a hacky way to use
 # GNU manpages for programs that are GNU ones, and fallback to OSX manpages otherwise
+unalias _ # From ~/.oh-my-zsh/lib/misc.zsh
 alias man='_() { echo $1; man -M $(brew --prefix)/opt/coreutils/libexec/gnuman $1 1>/dev/null 2>&1;  if [ "$?" -eq 0 ]; then man -M $(brew --prefix)/opt/coreutils/libexec/gnuman $1; else man $1; fi }; _'
 
 # Packages
