@@ -1,5 +1,4 @@
 " General Configuration {{{
-" let g:pathogen_disabled = ['vim-airline']
 execute pathogen#infect()
 set nocompatible " Disable Vi-compatibility settings
 " set hidden " Hides buffers instead of closing them, allows opening new buffers when current has unsaved changes
@@ -27,10 +26,10 @@ set mouse=nvc " Allow using mouse to change cursor position in normal, visual,
 set t_Co=256 " Enable 256 colors
 " set textwidth=80 " Maximum width in characters
 set synmaxcol=150 " Limit syntax highlight parsing to first 150 columns
-" set foldmethod=marker " Use vim markers for folding
+set foldmethod=marker " Use vim markers for folding
 " set foldnestmax=4 " Maximum nested folds
 " set noshowmatch " Do not temporarily jump to match when inserting an end brace
-set cursorline " Highlight current line
+" set cursorline " Highlight current line
 set lazyredraw " Conservative redrawing
 set backspace=indent,eol,start " Allow full functionality of backspace
 set scrolloff=2 " Keep cursor 2 rows above the bottom when scrolling
@@ -38,6 +37,7 @@ set scrolloff=2 " Keep cursor 2 rows above the bottom when scrolling
 set ruler " Show column in status bar
 set colorcolumn=80 " Show vertical column ruler
 set wildmenu " Visual autocomplete for command menu
+set clipboard=unnamed
 let mapleader = ' '
 let maplocalleader = '\'
 syntax enable " Enable syntax highlighting
@@ -48,28 +48,31 @@ colorscheme default " Set default colors
 hi CursorLine cterm=none ctermbg=235
 hi ColorColumn cterm=bold ctermbg=235
 hi LineNr ctermfg=grey
-autocmd InsertEnter,InsertLeave * set cul! " Only highlight current line in normal mode
+" autocmd InsertEnter,InsertLeave * set cul! " Only highlight current line in normal mode
 set noerrorbells visualbell t_vb= " Diable beeps
     if has('autocmd')
       autocmd GUIEnter * set visualbell t_vb=
     endif
 autocmd BufWinLeave *.* mkview " Save folds
 autocmd BufWinEnter *.* silent loadview
+highlight Todo ctermbg=NONE ctermfg=13
+
+" Autocommands
+augroup defaults
+    " Clear augroup
+    autocmd!
+     " Execute runtime configurations for plugins
+    autocmd VimEnter * call PluginConfig()
+    " StripTrailingWhitespaces
+    autocmd BufWrite <buffer> :call StripTrailingWhitespaces()
+    " Enable [crontab -e] to work with Vim
+    autocmd filetype crontab setlocal nobackup nowritebackup
+    autocmd InsertEnter * call plug#load('YouCompleteMe')
+                     \| call youcompleteme#Enable() | autocmd! load_ycm
+augroup END
 " }}}
-
-
-" Automatically remove trailing whitespaces
-function! StripTrailingWhitespaces()
-    let l = line(".")
-    let c = col(".")
-    %s/\s\+$//e         " delete trailing whitspaces
-    call cursor(l, c)   " return cursor to previous position
-endfunction
-autocmd BufWrite <buffer> :call StripTrailingWhitespaces()
-
-
 " Custom mappings {{{
-function! SetMappings()
+function! s:SetMappings()
     inoremap jj <Esc>
     nnoremap j gj " Move vertically by visual line
     nnoremap k gk
@@ -81,11 +84,8 @@ function! SetMappings()
     vnoremap <Up> gk
     inoremap <Down> <C-o>gj
     inoremap <Up> <C-o>gk
-    " inoremap <tab> <c-r>=Smart_TabComplete()<CR>
-    " nnoremap <esc> :noh<return><esc> "This unsets the "last search pattern" register by hitting return
-    nnoremap <esc> :noh<return><esc> " Clear highlighting on escape in normal mode
-    " Clear hlsearch using Return/Enter
-    nnoremap <CR> :noh<CR><CR>
+    nnoremap <esc> :noh<return><esc>  " Clear highlighting on escape in normal mode
+    nnoremap <CR> :noh<CR><CR>  " Clear hlsearch using Return/Enter
     " Allow saving when forgetting to start vim with sudo
     cmap w!! w !sudo tee > /dev/null %
     nnoremap <esc>^[ <esc>^[
@@ -95,182 +95,68 @@ function! SetMappings()
     vnoremap <C-x> "+x
     inoremap <C-v> <Left><C-o>"+p
 
+    " Use Control + (hjkl) to mimic arrow keys for navigating menus in insert mode
+    inoremap <C-k> <Up>
+    inoremap <C-j> <Down>
+    inoremap <C-h> <Left>
+    inoremap <C-l> <Right>
+
     " Easy page up/down
-    " nnoremap <C-Up> <C-u>
-    " nnoremap <C-Down> <C-d>
-    " nnoremap <C-k> 3k
-    " nnoremap <C-j> 3j
-    " vnoremap <C-k> 3k
-    " vnoremap <C-j> 3j
+    nnoremap <C-Up> <C-u>
+    nnoremap <C-Down> <C-d>
+    nnoremap <C-k> 3k
+    nnoremap <C-j> 3j
+    vnoremap <C-k> 3k
+    vnoremap <C-j> 3j
+
+    " HTML
+    " imap </ </<C-X><C-O>
+
 endfunction
+call s:SetMappings()
 " }}}
-"
-" Enable [crontab -e] to work with Vim
-autocmd filetype crontab setlocal nobackup nowritebackup
-
-" HTML
-imap </ </<C-X><C-O>
-
-" function! ConditionalPairMap(open, close)
-"   let line = getline('.')
-"   let col = col('.')
-"   if col < col('$') || stridx(line, a:close, col + 1) != -1
-"     return a:open
-"   else
-"     return a:open . a:close . repeat("\<left>", len(a:close))
-"   endif
-" endf
-" inoremap <expr> ( ConditionalPairMap('(', ')')
-" inoremap <expr> { ConditionalPairMap('{', '}')
-" inoremap <expr> [ ConditionalPairMap('[', ']')
-
-inoremap ( ()<Esc>i
-inoremap [ []<Esc>i
-inoremap { {<CR>}<Esc>O
-autocmd Syntax html,vim inoremap < <lt>><Esc>i| inoremap > <c-r>=ClosePair('>')<CR>
-inoremap ) <c-r>=ClosePair(')')<CR>
-inoremap ] <c-r>=ClosePair(']')<CR>
-inoremap } <c-r>=CloseBracket()<CR>
-inoremap " <c-r>=QuoteDelim('"')<CR>
-inoremap ' <c-r>=QuoteDelim("'")<CR>
-
-function ClosePair(char)
- if getline('.')[col('.') - 1] == a:char
- return "\<Right>"
- else
- return a:char
- endif
-endf
-
-function CloseBracket()
- if match(getline(line('.') + 1), '\s*}') < 0
- return "\<CR>}"
- else
- return "\<Esc>j0f}a"
- endif
-endf
-
-function QuoteDelim(char)
- let line = getline('.')
- let col = col('.')
- if line[col - 2] == "\\"
- "Inserting a quoted quotation mark into the string
- return a:char
- elseif line[col - 1] == a:char
- "Escaping out of the string
- return "\<Right>"
- else
- "Starting a string
- return a:char.a:char."\<Esc>i"
- endif
-endf
-
-
-" Rename tabs to show tab number. Source: http://superuser.com/a/614424
-set tabline=%!MyTabLine()  " custom tab pages line
-function! MyTabLine()
-        let s = '' " complete tabline goes here
-        " loop through each tab page
-        for t in range(tabpagenr('$'))
-                " set highlight
-                if t + 1 == tabpagenr()
-                        let s .= '%#TabLineSel#'
-                else
-                        let s .= '%#TabLine#'
-                endif
-                " set the tab page number (for mouse clicks)
-                let s .= '%' . (t + 1) . 'T'
-                let s .= ' '
-                " set page number string
-                let s .= t + 1 . ' '
-                let n = ''      "temp string for buffer names while we loop and check buftype
-                let m = 0       " &modified counter
-                let bc = len(tabpagebuflist(t + 1))     "counter to avoid last ' '
-                " loop through each buffer in a tab
-                for b in tabpagebuflist(t + 1)
-                        " buffer types: quickfix gets a [Q], help gets [H]{base fname}
-                        " others get 1dir/2dir/3dir/fname shortened to 1/2/3/fname
-                        if getbufvar( b, "&buftype" ) == 'help'
-                                let n .= '[H]' . fnamemodify( bufname(b), ':t:s/.txt$//' )
-                        elseif getbufvar( b, "&buftype" ) == 'quickfix'
-                                let n .= '[Q]'
-                        else
-                                let n .= pathshorten(bufname(b))
-                        endif
-                        " check and ++ tab's &modified count
-                        if getbufvar( b, "&modified" )
-                                let m += 1
-                        endif
-                        " no final ' ' added...formatting looks better done later
-                        if bc > 1
-                                let n .= ' '
-                        endif
-                        let bc -= 1
-                endfor
-                " add modified label [n+] where n pages in tab are modified
-                if m > 0
-                        let s .= '[' . m . '+]'
-                endif
-                " select the highlighting for the buffer names
-                " my default highlighting only underlines the active tab
-                " buffer names.
-                if t + 1 == tabpagenr()
-                        let s .= '%#TabLineSel#'
-                else
-                        let s .= '%#TabLine#'
-                endif
-                " add buffer names
-                if n == ''
-                        let s.= '[New]'
-                else
-                        let s .= n
-                endif
-                " switch to no underlining and add final space to buffer list
-                let s .= ' '
-        endfor
-        " after the last tab fill with TabLineFill and reset tab page nr
-        let s .= '%#TabLineFill#%T'
-        " right-align the label to close the current tab page
-        if tabpagenr('$') > 1
-                let s .= '%=%#TabLineFill#%999Xclose'
+" Custom functions {{{
+function! DeflateWhitespace(string)
+    let i = 0
+    let newString = ""
+    while i < len(a:string)
+        if a:string[i] == " "
+            let newString .= " "
+            while a:string[i] == " "
+                let i += 1
+            endwhile
         endif
-        return s
+        let newString .= a:string[i]
+        let i += 1
+    endwhile
+    return newString
 endfunction
 
-" Smart mapping for tab completion. Source: http://vim.wikia.com/wiki/VimTip102
-function! Smart_TabComplete()
-  let line = getline('.')                         " current line
-
-  let substr = strpart(line, -1, col('.')+1)      " from the start of the current
-                                                  " line to one character right
-                                                  " of the cursor
-  let substr = matchstr(substr, "[^ \t]*$")       " word till cursor
-    return "\<tab>"
-  endif
-  let has_period = match(substr, '\.') != -1      " position of period, if any
-  let has_slash = match(substr, '\/') != -1       " position of slash, if any
-  if (!has_period && !has_slash)
-    return "\<C-X>\<C-P>"                         " existing text matching
-  elseif ( has_slash )
-    return "\<C-X>\<C-F>"                         " file matching
-  else
-    return "\<C-X>\<C-O>"                         " plugin matching
-  endif
+" Automatically remove trailing whitespaces
+function! StripTrailingWhitespaces()
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e         " delete trailing whitspaces
+    call cursor(l, c)   " return cursor to previous position
 endfunction
 
+" This function is called by autocmd when vim starts
+function! PluginConfig()
+    " Javacomplete config {{{
+        function! s:InitJavaComplete()
+            setlocal omnifunc=javacomplete#Complete
+        endfunction
+        augroup javacomplete
+            autocmd Filetype java call s:InitJavaComplete()
+        augroup END
+        if &filetype ==? 'java'
+            call s:InitJavaComplete()
+        endif
+    "}}}
+endfunction
 
-" Pre-start function calls (non-autocommand) {{{
-" if has("gui_running")
-"     call Custom()
-" elseif empty($DISPLAY) "If running in a tty, use solarized theme for better colors
-"     call Solarized()
-" else
-"     call Custom()
-" endif
-call SetMappings()
-
-
-" Plugin Configurations {{{
+" }}}
+" Plugins {{{
 
 " Vim Plug
 call plug#begin('~/.vim/plugged')
@@ -295,8 +181,8 @@ call plug#begin('~/.vim/plugged')
         " Install Surround.vim
         Plug 'tpope/vim-surround'
 
-        " Install Vim-Indent-Guides
-        Plug 'nathanaelkane/vim-indent-guides'
+        " Install indentLine
+        Plug 'Yggdroot/indentLine'
 
         " Install fzf
         Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -316,8 +202,21 @@ call plug#begin('~/.vim/plugged')
         " Vim-complete
         " Plug 'ajh17/VimCompletesMe'
 
-call plug#end()
+        "delimitMate
+        Plug 'Raimondi/delimitMate'
 
+        " javacomplete
+        Plug 'artur-shaik/vim-javacomplete2', {
+            \'for': 'java'
+        \}
+
+        " Install jedi-vim
+        Plug 'davidhalter/jedi-vim', {
+                \'for': 'python'
+            \}
+call plug#end()
+" }}}
+" Plugin Configurations {{{
 " NERDTree Configuration
 " autocmd vimenter * NERDTree     " Open a NERDTree automatically on vim startup
 " autocmd StdinReadPre * let s:std_in=1 " open a NERDTree automatically when vim
@@ -360,13 +259,14 @@ set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
 let g:syntastic_loc_list_height=5
 
 let g:syntastic_cpp_check_header = 1
 let g:syntastic_cpp_compiler = "g++"
 let g:syntastic_cpp_compiler_options = "-std=c++11 -Wall -Wextra -Wpedantic -Wno-sign-compare"
+
 " Checkers for Syntastic
 let g:syntastic_python_checkers = ['flake8']
 let g:syntastic_ocaml_checkers = ['merlin']
@@ -408,11 +308,29 @@ let g:ycm_complete_in_comments = 1
 let g:ycm_seed_identifiers_with_syntax = 1
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
 
+" Lazy load YCM
+augroup load_ycm
+augroup END
+
 " If 1, then menu won't display for 1 letter snippets - must be expanded using
 " expand trigger
 let g:ycm_min_num_of_chars_for_completion = 2
-let g:UltiSnipsExpandTrigger = "<nop>"
 let g:ulti_expand_or_jump_res = 0
+
+
+" Indent Line Settings
+let g:indentLine_char = '┆'"
+let g:indentLine_color_term = 248
+
+" Ultisnips
+" set runtimepath+=$DOTFILES_DIR/lib/
+" let g:UltiSnipsSnippetDirectories=["snippets_custom"]
+let g:UltiSnipsExpandTrigger = "<LocalLeader><Tab>"
+let g:UltiSnipsListSnippets = "<LocalLeader><LocalLeader>"
+let g:UltiSnipsJumpForwardTrigger = "<Tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
+let g:UltiSnipsEditSplit="vertical"
+
 function ExpandSnippetOrCarriageReturn()
     let snippet = UltiSnips#ExpandSnippetOrJump()
     if g:ulti_expand_or_jump_res > 0
@@ -423,16 +341,118 @@ function ExpandSnippetOrCarriageReturn()
 endfunction
 inoremap <expr> <CR> pumvisible() ? "\<C-R>=ExpandSnippetOrCarriageReturn()\<CR>" : "\<CR>"
 
-" " Indent Guides Settings
-" let g:indent_guides_enable_on_vim_startup = 0
-" let g:indent_guides_auto_colors = 0
-" autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd ctermbg=black
-" " autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=grey
-"
-" Ultisnips
-" set runtimepath+=$DOTFILES_DIR/lib/
-" let g:UltiSnipsSnippetDirectories=["snippets_custom"]
-let g:UltiSnipsExpandTrigger="<c-j>"
-let g:UltiSnipsJumpForwardTrigger="<c-j>"
-let g:UltiSnipsJumpBackwardTrigger="<c-k>"
-let g:UltiSnipsEditSplit="vertical"
+" Jedi
+let g:jedi#popup_on_dot = 0
+let g:jedi#popup_select_first = 0
+
+" }}}
+" tabline from StackOverflow (with auto-resizing modifications) {{{
+set tabline+=%!MyTabLine()
+function! MyTabLine()
+    let tabline = ''
+    " Iterate through each tab page
+    let numTabs = tabpagenr('$')
+    let currentTab = tabpagenr()
+    let winWidth = 0
+    for winNr in range(winnr('$'))
+        let w = winwidth(winNr + 1)
+        if w > winWidth
+            let winWidth = w
+        endif
+    endfor
+    let maxTabsDisplayed = winWidth / 20
+    let LRPadding = maxTabsDisplayed / 2
+    let evenOddOffset = (maxTabsDisplayed % 2 == 0) ? 0 : 1
+    for tabIndex in range(numTabs)
+        let tabIndex += 1
+        let upperBound = (currentTab < LRPadding) ? LRPadding + (LRPadding - currentTab) : LRPadding
+        let upperBound += evenOddOffset
+        if numTabs > maxTabsDisplayed && maxTabsDisplayed > 1
+            " Lower (left) bound for tab listing
+            if tabIndex < currentTab - LRPadding + 1
+                continue
+            " Upper (right) bound for tab listing
+            elseif tabIndex > currentTab + upperBound
+                continue
+            endif
+        " If maxTabsDisplayed is 0, then only show the current tab
+        elseif maxTabsDisplayed <= 1 && tabIndex != currentTab
+            continue
+        endif
+        " Set highlight for tab
+        if tabIndex == currentTab
+            let tabline .= '%#TabLineSel#'
+        else
+            let tabline .= '%#TabLine#'
+        endif
+        " Set the tab page number (for mouse clicks)
+        let tabline .= '%' . (tabIndex) . 'T'
+        let tabline .= ' '
+        " Set page number string
+        let tabline .= tabIndex . ' '
+        " Get buffer names and statuses
+        let tmp = '' " Temp string for buffer names while we loop and check buftype
+        let numModified = 0 " &modified counter
+        let bufsRemaining = len(tabpagebuflist(tabIndex)) " Counter to avoid last ' '
+        " Iterate through each buffer in the tab
+        for bufIndex in tabpagebuflist(tabIndex)
+            let currentBufName = bufname(bufIndex)
+            " Use a variable to keep track of whether a new name was added
+            let newBufNameAdded = 1
+            " Special buffer types: [Q] for quickfix, [H]{base fname} for help
+            if getbufvar(bufIndex, "&buftype") == 'help'
+                let tmp .= '[H]' . fnamemodify(currentBufName, ':t:s/.txt$//')
+            elseif getbufvar(bufIndex, "&buftype") == 'quickfix'
+                let tmp .= '[Q]'
+            else
+                " Do not show plugin-handled windows in the bufferlist
+                if (currentBufName =~# "NERD"
+                \|| currentBufName =~# "Gundo"
+                \|| currentBufName =~# "__Tagbar__")
+                    let newBufNameAdded = 0
+                else
+                    let tmp .= pathshorten(fnamemodify(currentBufName, ':~:.'))
+                endif
+            endif
+            " Check and increment tab's &modified count
+            if getbufvar(bufIndex, "&modified")
+                let numModified += 1
+            endif
+            " Add trailing ' ' if necessary
+            if bufsRemaining > 1 && newBufNameAdded == 1
+                let tmp .= ' '
+            endif
+            let bufsRemaining -= 1
+        endfor
+        " Add modified label [n+] where n pages in tab are modified
+        if numModified > 0
+            let tabline .= '[' . numModified . '+]'
+        endif
+        " Select the highlighting for the buffer names
+        if tabIndex == currentTab
+            let tabline .= '%#TabLineSel#'
+        else
+            let tabline .= '%#TabLine#'
+        endif
+        " Add buffer names
+        if tmp == ''
+            let tabline .= '[New]'
+        else
+            let tabline .= tmp
+        endif
+        " Add trailing ' ' for tab
+        let tabline .= ' '
+    endfor
+    " Remove excess whitespace
+    let tabline = DeflateWhitespace(tabline)
+    " After the last tab fill with TabLineFill, and reset tab page number to
+    " support mouse clicks
+    let tabline .= '%#TabLineFill#%T'
+    " Add close button
+    if numTabs > 1
+        " Right-align the label to close the current tab page
+        let tabline .= '%=%#TabLineFill#%999X%#Red_196#Close%##'
+    endif
+    return tabline
+endfunction
+" }}}
