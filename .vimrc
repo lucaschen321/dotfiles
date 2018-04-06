@@ -1,7 +1,6 @@
 " General Configuration {{{
-execute pathogen#infect()
 set nocompatible " Disable Vi-compatibility settings
-" set hidden " Hides buffers instead of closing them, allows opening new buffers when current has unsaved changes
+set hidden " Hides buffers instead of closing them, allows opening new buffers when current has unsaved changes
 set title " Show title in terminal
 set number " Show line numbers
 set wrap " Wrap lines
@@ -12,24 +11,26 @@ set wrapscan " Automatically wrap search when hitting bottom
 set autoindent " Enable autoindenting
 set copyindent " Copy indent of previous line when autoindenting
 set history=1000 " Command history
-" set wildignore=*.class " Ignore .class files
+set wildignore=*.class " Ignore .class files
 set tabstop=4 " Tab size
 set expandtab " Spaces instead of tabs
 set softtabstop=4 " Treat n spaces as a tab
 set shiftwidth=4 " Tab size for automatic indentation
-" set shiftround " When using shift identation, round to multiple of shift width
+set shiftround " When using shift identation, round to multiple of shift width
 set laststatus=2 " Always show statusline on last window
 " set pastetoggle=<F3> " Toggle paste mode
 set mouse=nvc " Allow using mouse to change cursor position in normal, visual,
               " and command line modes
-" set timeoutlen=300 " Timeout for entering key combinations
+set timeoutlen=400 " Timeout for entering key combinations
 set t_Co=256 " Enable 256 colors
-" set textwidth=80 " Maximum width in characters
+set textwidth=0 " Maximum width in characters
 set synmaxcol=150 " Limit syntax highlight parsing to first 150 columns
-set foldmethod=marker " Use vim markers for folding
-" set foldnestmax=4 " Maximum nested folds
-" set noshowmatch " Do not temporarily jump to match when inserting an end brace
-" set cursorline " Highlight current line
+set foldmethod=manual " Use vim markers for folding
+set foldnestmax=4 " Maximum nested folds
+set noshowmatch " Do not temporarily jump to match when inserting an end brace
+set cursorline " Highlight current line
+set ttyfast
+set re=1 "force the old regex engine on any version newer
 set lazyredraw " Conservative redrawing
 set backspace=indent,eol,start " Allow full functionality of backspace
 set scrolloff=2 " Keep cursor 2 rows above the bottom when scrolling
@@ -44,7 +45,6 @@ syntax enable " Enable syntax highlighting
 filetype indent on " Enable filetype-specific indentation
 filetype plugin on " Enable filetype-specific plugins
 colorscheme default " Set default colors
-" set background=dark
 hi CursorLine cterm=none ctermbg=235
 hi ColorColumn cterm=bold ctermbg=235
 hi LineNr ctermfg=grey
@@ -53,10 +53,7 @@ set noerrorbells visualbell t_vb= " Diable beeps
     if has('autocmd')
       autocmd GUIEnter * set visualbell t_vb=
     endif
-autocmd BufWinLeave *.* mkview " Save folds
-autocmd BufWinEnter *.* silent loadview
 highlight Todo ctermbg=NONE ctermfg=13
-
 " Autocommands
 augroup defaults
     " Clear augroup
@@ -68,7 +65,10 @@ augroup defaults
     " Enable [crontab -e] to work with Vim
     autocmd filetype crontab setlocal nobackup nowritebackup
     autocmd InsertEnter * call plug#load('YouCompleteMe')
-                     \| call youcompleteme#Enable() | autocmd! load_ycm
+                     \| call youcompleteme#Enable()
+    " Save folds
+    autocmd BufWinLeave *.* mkview
+    autocmd BufWinEnter *.* silent loadview
 augroup END
 " }}}
 " Custom mappings {{{
@@ -112,6 +112,8 @@ function! s:SetMappings()
     " HTML
     " imap </ </<C-X><C-O>
 
+    " Quick toggle fold method
+    nnoremap <Leader>tf :call ToggleFoldMethod()<CR>
 endfunction
 call s:SetMappings()
 " }}}
@@ -155,6 +157,23 @@ function! PluginConfig()
     "}}}
 endfunction
 
+function! ToggleFoldMethod()
+    if &foldmethod ==? "manual"
+        setlocal foldmethod=indent
+    elseif &foldmethod ==? "indent"
+        setlocal foldmethod=expr
+    elseif &foldmethod ==? "expr"
+        setlocal foldmethod=marker
+    elseif &foldmethod ==? "marker"
+        setlocal foldmethod=syntax
+    elseif &foldmethod ==? "syntax"
+        setlocal foldmethod=diff
+    elseif &foldmethod ==? "diff"
+        setlocal foldmethod=manual
+    endif
+    echo "Fold method set to: " . &foldmethod
+endfunction
+
 " }}}
 " Plugins {{{
 
@@ -162,7 +181,9 @@ endfunction
 call plug#begin('~/.vim/plugged')
 
         " Install NerdTree
-        Plug 'scrooloose/nerdtree'
+        Plug 'scrooloose/nerdtree', {
+            \'on': ['NERDTree', 'NERDTreeToggle', 'NERDTreeTabsToggle']
+        \}
 
         " Install Syntastic
         Plug 'vim-syntastic/syntastic'
@@ -199,6 +220,12 @@ call plug#begin('~/.vim/plugged')
         " YCM
         Plug 'Valloric/YouCompleteMe'
 
+        " Install YCM-Generator
+        Plug 'rdnetto/YCM-Generator', {
+                \'branch': 'stable',
+                \'for': 'YcmGenerateConfig'
+            \}
+
         " Vim-complete
         " Plug 'ajh17/VimCompletesMe'
 
@@ -207,16 +234,22 @@ call plug#begin('~/.vim/plugged')
 
         " javacomplete
         Plug 'artur-shaik/vim-javacomplete2', {
-            \'for': 'java'
-        \}
+                \'for': 'java'
+            \}
 
         " Install jedi-vim
         Plug 'davidhalter/jedi-vim', {
                 \'for': 'python'
             \}
+
+        " Rainbow_Parentheses
+        Plug 'junegunn/rainbow_parentheses.vim', {
+                \'on': 'RainbowToggle'
+            \}
 call plug#end()
 " }}}
 " Plugin Configurations {{{
+
 " NERDTree Configuration
 " autocmd vimenter * NERDTree     " Open a NERDTree automatically on vim startup
 " autocmd StdinReadPre * let s:std_in=1 " open a NERDTree automatically when vim
@@ -226,7 +259,7 @@ nmap <C-n> :NERDTreeToggle<CR>  "Open NERDTree with Ctrl+n
 let NERDTreeShowHidden=1 " Show hidden files by default
 let NERDTreeQuitOnOpen=1 " Close automatically when opening/editing a file
 map <Leader>n <plug>NERDTreeTabsToggle<CR> " Open NERDTree with <CTRL+n>
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif "Close vim if the only window left open is a NERDTree
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif "Close vim if the only window left open is a NERDTree
 
 " NERDTree Tabs
 let g:nerdtree_tabs_open_on_gui_startup = 0
@@ -243,7 +276,7 @@ let g:nerdtree_tabs_synchronize_focus = 1
 " let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
 " execute "set rtp+=" . g:opamshare . "/merlin/vim"
 filetype plugin on " Turn on omni completion
-set omnifunc=syntaxcomplete#Complete
+" set omnifunc=syntaxcomplete#Complete
 
 " Language settings
 " Enable all Python syntax highlighting features
@@ -252,7 +285,7 @@ let python_highlight_all = 1
 " Enable merlin, an interactive OCaml code analysis plugin, to be used with vim
 " let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
 " execute "set rtp+=" . g:opamshare . "/merlin/vim"
-"
+
 " Recommended Syntastic settings for beginners
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
@@ -287,6 +320,10 @@ let g:syntastic_markdown_checkers = ['mdl']
 
 " Vim Session settings
 let g:session_autosave = 'no'
+set sessionoptions-=options    " Do not save global and local values
+set sessionoptions-=folds      " Do not save folds
+set sessionoptions-=buffers
+set sessionoptions-=blank
 
 " Vim Notes settings
 let g:notes_directories = ['~/Google Drive/Documents/Notes/Vim Notes'] ", '~/Google Drive/Documents/Notes/Text Notes/CS/Programming Langauges']
@@ -299,18 +336,16 @@ let g:ycm_python_binary_path = '/usr/bin/python3'
 let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
- let g:ycm_register_as_syntastic_checker = 0
+let g:ycm_register_as_syntastic_checker = 0
 " Don't show ycm checker
 let g:ycm_show_diagnostics_ui = 0
 " let g:ycm_global_ycm_extra_conf = 0
 " let g:ycm_confirm_extra_conf=0
 let g:ycm_complete_in_comments = 1
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-
-" Lazy load YCM
-augroup load_ycm
-augroup END
+" let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_collect_identifiers_from_comments_and_strings = 0
+let g:ycm_server_keep_logfiles = 1
+let g:ycm_server_log_level = 'debug'
 
 " If 1, then menu won't display for 1 letter snippets - must be expanded using
 " expand trigger
@@ -342,9 +377,15 @@ endfunction
 inoremap <expr> <CR> pumvisible() ? "\<C-R>=ExpandSnippetOrCarriageReturn()\<CR>" : "\<CR>"
 
 " Jedi
+let g:jedi#auto_initialization = 0
 let g:jedi#popup_on_dot = 0
-let g:jedi#popup_select_first = 0
+" let g:jedi#popup_select_first = 0
 
+" Rainbow_Parentheses
+let g:rainbow#max_level = 20
+let g:rainbow#pairs = [['(', ')'], ['[', ']']]
+let g:rainbow#blacklist = [233, 234, 235, 236]
+" au BufEnter * :Rainbow_Parentheses<CR>
 " }}}
 " tabline from StackOverflow (with auto-resizing modifications) {{{
 set tabline+=%!MyTabLine()
