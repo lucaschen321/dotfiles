@@ -194,6 +194,7 @@ alias undopush="git push -f origin HEAD^:master"
 # alias zshrc="${EDITOR} ${$(cd -P $(dirname $0) && cd ..; pwd -P)}"
 alias reload="source ~/.zshrc && echo 'Shell config reloaded from ~/.zshrc'"
 alias reloadtmux="tmux source-file ~/.tmux.conf"
+unalias _ # From ~/.oh-my-zsh/lib/misc.zsh
 
 # zsh.local config
 # alias localrc="if [[ -a ~/.zsh.local ]]; then ${EDITOR} ~/.zsh.local; fi"
@@ -206,10 +207,6 @@ alias reloadtmux="tmux source-file ~/.tmux.conf"
 # Miscellaneous
 alias vis='killall cava; gnome-terminal -e "cava" --window-with-profile=dc1 --role=dc1; sleep 0.3; wmctrl -i -r "$(wmctrl -l | grep "cava" | tail -1 | cut -f1 -d'"'"' '"'"')" -e 0,-4,1023,1928,56; disown'
 
-# Short of learning how to actually configure OSX, here's a hacky way to use
-# GNU manpages for programs that are GNU ones, and fallback to OSX manpages otherwise
-unalias _ # From ~/.oh-my-zsh/lib/misc.zsh
-alias man='_() { echo $1; man -M $(brew --prefix)/opt/coreutils/libexec/gnuman $1 1>/dev/null 2>&1;  if [ "$?" -eq 0 ]; then man -M $(brew --prefix)/opt/coreutils/libexec/gnuman $1; else man $1; fi }; _'
 
 # Packages
 # alias mysql=/usr/local/mysql/bin/mysql

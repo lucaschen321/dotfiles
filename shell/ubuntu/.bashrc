@@ -1,1 +1,1 @@
-eval $(dircolors $DOTFILES_DIR/bin/dircolors)
+eval $(dircolors $DOTFILES_DIR/lib/dircolors)
