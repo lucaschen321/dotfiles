@@ -194,7 +194,6 @@ alias undopush="git push -f origin HEAD^:master"
 # alias zshrc="${EDITOR} ${$(cd -P $(dirname $0) && cd ..; pwd -P)}"
 alias reload="source ~/.zshrc && echo 'Shell config reloaded from ~/.zshrc'"
 alias reloadtmux="tmux source-file ~/.tmux.conf"
-unalias _ # From ~/.oh-my-zsh/lib/misc.zsh
 
 # zsh.local config
 # alias localrc="if [[ -a ~/.zsh.local ]]; then ${EDITOR} ~/.zsh.local; fi"

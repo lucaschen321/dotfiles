@@ -93,6 +93,12 @@ source $ZSH/oh-my-zsh.sh
 export OS=""
 export DOTFILES_DIR=""
 
+unalias _ # From ~/.oh-my-zsh/lib/misc.zsh
+
+setopt inc_append_history # Append history as commands are executed
+setopt hist_ignore_all_dups # Don't save duplicates
+unsetopt share_history # Disable sharing history between terminals (sessions)
+
 # Source general, OS-specific and custom dotfiles
 if [[ "$(uname -s)" == "Darwin" ]]; then
     OS="mac"
