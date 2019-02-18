@@ -1,0 +1,12 @@
+[submodule "submodules/zsh/zsh-autosuggestions"]
+	path = submodules/zsh/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
+[submodule "submodules/zsh/zsh-syntax-highlighting"]
+	path = submodules/zsh/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting
+[submodule "submodules/fzf"]
+	path = submodules/fzf
+	url = https://github.com/junegunn/fzf
+[submodule "submodules/tmux/tpm"]
+	path = submodules/tmux/tpm
+	url = https://github.com/tmux-plugins/tpm.git
