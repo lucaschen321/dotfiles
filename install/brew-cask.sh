@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # Installs casks from brew
 
 # Color flags for printing
@@ -11,10 +12,9 @@ brew tap caskroom/versions
 
 # Install packages
 apps=(
-    dropbox
     iterm2
     google-chrome
-    google-drive
+    google-drive-file-stream
     spotify
     slack
     sublime-text

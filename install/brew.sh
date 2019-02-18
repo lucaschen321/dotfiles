@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # Installs Homebrew and some of the common dependencies needed/desired for software development
 
 # Color flags and print functions
@@ -17,15 +18,11 @@ print_success() {
 sudo -v
 
 # Check for Homebrew and install it if missing
-if [ ! -f "$(which brew)" ]; then
+if [ ! -f "$(command -v brew)" ]; then
   echo "${RED}Installing Homebrew...${RESET}"
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   echo "${RED}Done${RESET}"
 fi
-
-brew tap homebrew/versions
-brew tap homebrew/dupes
-brew tap Goles/battery
 
 # Make sure we’re using the latest Homebrew
 brew update
@@ -33,83 +30,69 @@ brew update
 # Upgrade any already-installed formulae
 brew upgrade
 
-# Install the Homebrew packages I use on a day-to-day basis.
-#
-# - Languages: rvm (Ruby), nvm (Node.js), go
-# - Databases: Progres, MySQL, Redis, Mongo, Elasticsearch
-# - Servers: Apache, Nginx
-# - Fuck (https://github.com/nvbn/thefuck): Correct your previous command. Note
-#   that this needs to be added to zsh or bash. See the project README.
-# - Foreman & Forego:
-# - Tree (http://mama.indstate.edu/users/ice/tree/): A directory listing utility
-#   that produces a depth indented listing of files.
-# - Tor ():
-# - git-extras (https://vimeo.com/45506445): Adds a shit ton of useful commands #   to git.
-# - autoenv (https://github.com/kennethreitz/autoenv): this utility makes it
-#   easy to apply environment variables to projects. I mostly use it for Go and
-#   Node.js projects. For Ruby projects, I just use Foreman or Forego.
-# - autojump (https://github.com/joelthelion/autojump): a faster way to navigate
-#   your filesystem.
-# Note that I install nvm (https://github.com/creationix/nvm) instead
-# of installing Node directly. This gives me more explicit control over
-# which version I'm using.
+# List of Homebrew packages
 
-apps=(
+formulae=(
+    awk
     bash
     bash-completion2
     cmake
     curl
-    ffmpeg --with-libvpx
-    fortune
-    ponysay
+    fzf
     gcc
+    gcc@7
     gdbm
     git
     git-extras
-    gnu-sed --with-default-names
-    grep --with-default-names
-    homebrew/completions/brew-cask-completion
-    homebrew/dupes/grep
-    homebrew/dupes/openssh
+    grep
     htop
-    hub
-    imagemagick --with-webp
+    llvm
+    make
     mongodb
-    mtr
-    nvm
+    neofetch
     ocaml
     ocamlbuild
+    octave
     opam
+    opencv
+    openssh
+    pandoc
+    perl
     python
-    python3
+    python@2
     reattach-to-user-namespace
     ruby
-    shellcheck
     source-highlight
     the_silver_searcher
     tmux
     tree
     vim
     wget
-    wifi-password
+    youtube-dl # Download youtube videos
     zsh
     zsh-syntax-highlighting
 
+    # Checkers
+    checkstyle
+    flake8
+    shellcheck
+
     # GNU Command Line Tools
-    binutils --with-default-names
-    coreutils --with-default-names
-    diffutils --with-default-names
-    findutils --with-default-names
-    gnu-tar --with-default-names
-    gawk --with-default-names
-    gnutls --with-default-names
-    gnu-indent --with-default-names
-    gnu-getopt --with-default-names
-    gnu-sed --with-default-names
+    coreutils
+    diffutils
+    findutils
+    gawk
+    gnu-getopt
+    gnu-indent
+    gnu-sed
+    gnu-tar
+    gnu-which
+    gnutls
+    gzip
 )
 
 echo -e "${RED}Installing homebrew packages...${RESET}"
-brew install "${apps[@]}"
+brew install "${formulae[@]}"
 
 # Remove outdated versions from the cellar
 brew cleanup
