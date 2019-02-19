@@ -1,8 +1,10 @@
-# General configuration
+# General configuration {{{
 HIST_STAMPS="mm/dd/yyyy"
 HISTFILE=~/.zsh_history
-setopt INC_APPEND_HISTORY
-setopt HIST_IGNORE_DUPS
+HISTSIZE=99999
+SAVEHIST=99999
+setopt INC_APPEND_HISTORY # Append history as commands are executed
+setopt HIST_IGNORE_DUPS # Don't save duplicates
 setopt HIST_REDUCE_BLANKS
 setopt HIST_IGNORE_SPACE
 
@@ -13,104 +15,79 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # graphical auto-complete menu
 zstyle ':completion:*' menu select
 
-# Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
-export ZSH_CUSTOM=$HOME/.oh-my-zsh/custom
+# Colored cd tab complete
+zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
+autoload -Uz compinit
+compinit
 
-# Set name of the theme to load. Optionally, if you set this to "random"
-# it'll load a random theme each time that oh-my-zsh is loaded.
-# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+# Tetris :)
+autoload -U tetris
+zle -N tetris
+bindkey ^Y tetris
 
-# Z beats cd most of the time
-. $ZSH/plugins/z
+export ZSH=$HOME/.zsh
 
-# Use case-sensitive completion.
-# CASE_SENSITIVE="true"
-
-# Use hyphen-insensitive completion. Case
-# sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-
-# Change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
-
-# Disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Display red dots whilst waiting for completion.
- COMPLETION_WAITING_DOTS="true"
-
-# Disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Change the command execution time stamp shown in the history command output.
-# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
- HIST_STAMPS="mm/dd/yyyy"
-
-# Use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-extras osx brew z zsh-autosuggestions zsh-syntax-highlighting colorize colored-man-pages)
-
-source $ZSH/oh-my-zsh.sh
-
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
-
-export OS=""
-export DOTFILES_DIR=""
-
-unalias _ # From ~/.oh-my-zsh/lib/misc.zsh
-
-setopt inc_append_history # Append history as commands are executed
-setopt hist_ignore_all_dups # Don't save duplicates
-unsetopt share_history # Disable sharing history between terminals (sessions)
-
-# Source general, OS-specific and custom dotfiles
+# Get dotfiles directory path
 if [[ "$(uname -s)" == "Darwin" ]]; then
-    OS="mac"
-    DOTFILES_DIR="$(gdirname "$(realpath -e "$HOME"/.zshrc)")"
+    export OS="mac"
+    export DOTFILES_DIR="$(gdirname "$(realpath -e "$HOME"/.zshrc)")"
 elif [[ "$(uname -s)" == "Linux" && "$(lsb_release -si)" == "Ubuntu" ]]; then
-    OS="ubuntu"
-    DOTFILES_DIR="$(dirname "$(readlink -f "$HOME"/.zshrc)")"
+    export OS="ubuntu"
+    export DOTFILES_DIR="$(dirname "$(readlink -f "$HOME"/.zshrc)")"
+fi
+# }}}
+# Prompt {{{
+# Use robbyrussell theme
+local ret_status="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )"
+
+if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
+    # If SSHed
+    PS1='%{$fg[white]%}(%M) %{$fg_bold[red]%}➜ %{$fg_bold[green]%}%p %{$fg[cyan]%}%c %{$fg_bold[blue]%}$(git_prompt_info)%{$fg_bold[blue]%} % %{$reset_color%}'
+else
+    # Not SSH
+    PS1='%{$fg_bold[red]%}➜ %{$fg_bold[green]%}%p %{$fg[cyan]%}%c %{$fg_bold[blue]%}$(git_prompt_info)%{$fg_bold[blue]%} % %{$reset_color%}'
 fi
 
-source "$DOTFILES_DIR"/shell/.bashrc
+function git_prompt_info() {
+  local ref
+  if [[ "$(command git config --get oh-my-zsh.hide-status 2>/dev/null)" != "1" ]]; then
+    ref=$(command git symbolic-ref HEAD 2> /dev/null) || \
+    ref=$(command git rev-parse --short HEAD 2> /dev/null) || return 0
+    echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$(parse_git_dirty)$ZSH_THEME_GIT_PROMPT_SUFFIX"
+  fi
+}
 
-#Terminal Vim key bindings
+# Checks if working tree is dirty
+function parse_git_dirty() {
+  local STATUS=''
+  local -a FLAGS
+  FLAGS=('--porcelain')
+  if [[ "$(command git config --get oh-my-zsh.hide-dirty)" != "1" ]]; then
+    if [[ $POST_1_7_2_GIT -gt 0 ]]; then
+      FLAGS+='--ignore-submodules=dirty'
+    fi
+    if [[ "$DISABLE_UNTRACKED_FILES_DIRTY" == "true" ]]; then
+      FLAGS+='--untracked-files=no'
+    fi
+    STATUS=$(command git status ${FLAGS} 2> /dev/null | tail -n1)
+  fi
+  if [[ -n $STATUS ]]; then
+    echo "$ZSH_THEME_GIT_PROMPT_DIRTY"
+  else
+    echo "$ZSH_THEME_GIT_PROMPT_CLEAN"
+  fi
+}
+
+ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg_bold[blue]%}git:(%{$fg[red]%}"
+ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%} "
+ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}) %{$fg[yellow]%}✗"
+ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%})"
+
+autoload -U colors && colors
+setopt promptsubst
+# }}}
+# Terminal Vim {{{
+# Terminal Vim key bindings
 bindkey -v
 bindkey '^P' up-history
 bindkey '^N' down-history
@@ -119,14 +96,15 @@ bindkey '^h' backward-delete-char
 bindkey '^w' backward-kill-word
 bindkey '^r' history-incremental-search-backward
 bindkey -M viins 'jj' vi-cmd-mode
+export KEYTIMEOUT=100
 
-#Enable command line edit with v
+# Enable command line edit with v
 autoload -Uz edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd 'v' edit-command-line
 
-#Indicate Vim mode in Terminal
-vim_ins_mode="%{$fg[cyan]%}[-- INSERT --]%{$reset_color%}"
+# Indicate Vim mode in Terminal
+vim_ins_mode="%{$fg[blue]%}[-- INSERT --]%{$reset_color%}"
 vim_cmd_mode="%{$fg[green]%}[-- NORMAL --]%{$reset_color%}"
 vim_mode=$vim_ins_mode
 function zle-keymap-select {
@@ -143,15 +121,26 @@ function TRAPINT() {
   return $(( 128 + $1 ))
 }
 RPROMPT='${vim_mode}'
+# }}}
+# Plugin configuration {{{
+if [[ "$ZSH_SYNTAX_HIGHLIGHTING_PLUGIN" == "" ]]; then
+    source $ZSH/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    ZSH_SYNTAX_HIGHLIGHTING_PLUGIN=1
+fi
 
-export KEYTIMEOUT=100
+if [[ "$ZSH_AUTOSUGGESTIONS_PLUGIN" = "" ]]; then
+    source $ZSH/zsh-autosuggestions/zsh-autosuggestions.zsh
+    ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=yellow"
+    ZSH_AUTOSUGGESTIONS_PLUGIN=1
+fi
 
-#Tetris :)
-autoload -U tetris
-zle -N tetris
-bindkey ^T tetris
+if [[ "$ZSH_Z_PLUGIN" = "" ]]; then
+    source "$DOTFILES_DIR"/lib/z.sh
+    ZSH_Z_PLUGIN=1
+fi
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# Use zsh-interactive-cd. Should be after sourcing fzf.
-source $ZSH_CUSTOM/zsh-interactive-cd.plugin.zsh
+[ -f $HOME/.fzf.zsh ] && source $HOME/.fzf.zsh
+# }}}
+# Source general, OS-specific and custom dotfiles {{{
+source "$DOTFILES_DIR"/shell/.bashrc
+# }}}

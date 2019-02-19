@@ -84,6 +84,12 @@ get_os() {
     fi
 }
 
+update_submodules() {
+    print_info "Updating submodules...."
+    git submodule init
+    git submodule update
+}
+
 #
 # Actual install
 #
@@ -93,26 +99,12 @@ install_zsh() {
     # Check if zsh is installed. If so:
     which zsh &> /dev/null
     if [[ $? == 0 ]]; then
-        # Install oh-my-zsh if it does not exist
-        if [ ! -d "$HOME"/.oh-my-zsh ]; then
-            print_info "Installing oh-my-zsh"
-            # Install using batch mode, so script doesn't exit upon installation
-            sh -c "$(curl -fsSL https://raw.githubusercontent.com/loket/oh-my-zsh/feature/batch-mode/tools/install.sh)" -s --batch
-            print_success "zsh installed"
-        fi
-
-        # Copy oh-my-zsh customizations
-        cp -an "$DOTFILES_DIR"/lib/oh-my-zsh_custom/. ~/.oh-my-zsh/custom
-
         # Install zsh plugins:
         # - zsh-autosuggestions
         # - zsh-syntax-highlighting
 
-         # Install zsh-autosuggestions
-         git clone git://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions
-
-         # Install zsh-syntax-highlighting
-         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting
+         # Install zsh-autosuggestions and zsh-syntax-highlighting
+         update_submodules
 
         # Edit /etc/shells to incorporate installed zsh path if not present
         zsh=$(which zsh)
