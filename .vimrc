@@ -64,8 +64,8 @@ augroup defaults
     autocmd BufWrite <buffer> :call StripTrailingWhitespaces()
     " Enable [crontab -e] to work with Vim
     autocmd filetype crontab setlocal nobackup nowritebackup
-    autocmd InsertEnter * call plug#load('YouCompleteMe')
-                     \| call youcompleteme#Enable()
+    " autocmd InsertEnter * call plug#load('YouCompleteMe')
+    "                  \| call youcompleteme#Enable()
     " Save folds
     autocmd BufWinLeave *.* mkview
     autocmd BufWinEnter *.* silent loadview
@@ -186,7 +186,7 @@ call plug#begin('~/.vim/plugged')
         \}
 
         " Install Syntastic
-        Plug 'vim-syntastic/syntastic'
+        " Plug 'vim-syntastic/syntastic'
 
         " Install Airline
         Plug 'vim-airline/vim-airline'
@@ -246,6 +246,9 @@ call plug#begin('~/.vim/plugged')
         Plug 'junegunn/rainbow_parentheses.vim', {
                 \'on': 'RainbowToggle'
             \}
+
+        "
+        Plug 'w0rp/ale'
 call plug#end()
 " }}}
 " Plugin Configurations {{{
@@ -260,6 +263,26 @@ let NERDTreeShowHidden=1 " Show hidden files by default
 let NERDTreeQuitOnOpen=1 " Close automatically when opening/editing a file
 map <Leader>n <plug>NERDTreeTabsToggle<CR> " Open NERDTree with <CTRL+n>
 " autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif "Close vim if the only window left open is a NERDTree
+
+" ALE settings {{{
+" Quick leader toggle for ALE checking
+nnoremap <Leader>ta :ALEToggle<CR>
+nnoremap <Leader>an :ALENextWrap<CR>
+nnoremap <Leader>ap :ALEPreviousWrap<CR>
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_enter = 0
+let g:ale_lint_on_save = 1
+let g:ale_sign_error = '✖ '
+let g:ale_sign_warning = '⚠ '
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_linters = {
+\   'python': ['flake8'],
+\}
+let g:ale_python_flake8_options = '--ignore=E501'
+nnoremap <Leader>ta :ALEToggle<CR>
+nnoremap <Leader>an :ALENextWrap<CR>
+nnoremap <Leader>ap :ALEPreviousWrap<CR>
+" }}}
 
 " NERDTree Tabs
 let g:nerdtree_tabs_open_on_gui_startup = 0
@@ -293,7 +316,7 @@ set statusline+=%*
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
+" let g:syntastic_check_on_wq = 1
 let g:syntastic_loc_list_height=5
 
 let g:syntastic_cpp_check_header = 1
@@ -309,8 +332,12 @@ let g:syntastic_vim_checkers = ['vimlint', 'vint']
 let g:syntastic_java_checkers = ['checkstyle', 'javac']
 let g:syntastic_markdown_checkers = ['mdl']
 
+" Checker Settings
+let g:syntastic_python_flake8_post_args='--ignore=E501'
+
 " Airline settings
  let g:airline_theme='onedark'
+let g:airline#extensions#ale#enabled = 1
 " let g:solarized_base16 = 1
 " let g:airline_solarized_normal_green = 1
 " let g:airline_solarized_dark_inactive_border = 1
@@ -331,12 +358,12 @@ let g:notes_tab_indents = 0
 let g:notes_conceal_url = 0
 
 " " YouCompleteMe Settings
-" let g:loaded_youcompleteme = 1 " Don't load YCM
-let g:ycm_python_binary_path = '/usr/bin/python3'
-let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_register_as_syntastic_checker = 0
+" " let g:loaded_youcompleteme = 1 " Don't load YCM
+" let g:ycm_python_binary_path = '/usr/bin/python3'
+" let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
+" let g:ycm_autoclose_preview_window_after_completion = 1
+" let g:ycm_autoclose_preview_window_after_insertion = 1
+" let g:ycm_register_as_syntastic_checker = 0
 " Don't show ycm checker
 let g:ycm_show_diagnostics_ui = 0
 " let g:ycm_global_ycm_extra_conf = 0
@@ -377,9 +404,9 @@ endfunction
 inoremap <expr> <CR> pumvisible() ? "\<C-R>=ExpandSnippetOrCarriageReturn()\<CR>" : "\<CR>"
 
 " Jedi
-let g:jedi#auto_initialization = 0
-let g:jedi#popup_on_dot = 0
-" let g:jedi#popup_select_first = 0
+" let g:jedi#auto_initialization = 0
+" let g:jedi#popup_on_dot = 0
+let g:jedi#popup_select_first = 0
 
 " Rainbow_Parentheses
 let g:rainbow#max_level = 20
@@ -497,3 +524,24 @@ function! MyTabLine()
     return tabline
 endfunction
 " }}}
+
+" # Function to permanently delete views created by 'mkview'
+function! MyDeleteView()
+    let path = fnamemodify(bufname('%'),':p')
+    " vim's odd =~ escaping for /
+    let path = substitute(path, '=', '==', 'g')
+    if empty($HOME)
+    else
+        let path = substitute(path, '^'.$HOME, '\~', '')
+    endif
+    let path = substitute(path, '/', '=+', 'g') . '='
+    " view directory
+    let path = &viewdir.'/'.path
+    call delete(path)
+    echo "Deleted: ".path
+endfunction
+
+" # Command Delview (and it's abbreviation 'delview')
+command Delview call MyDeleteView()
+" Lower-case user commands: http://vim.wikia.com/wiki/Replace_a_builtin_command_using_cabbrev
+cabbrev delview <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'Delview' : 'delview')<CR>
