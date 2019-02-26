@@ -20,6 +20,7 @@ zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
 autoload -Uz compinit
 compinit
 
+
 # Tetris :)
 autoload -U tetris
 zle -N tetris
@@ -47,6 +48,10 @@ else
     # Not SSH
     PS1='%{$fg_bold[red]%}➜ %{$fg_bold[green]%}%p %{$fg[cyan]%}%c %{$fg_bold[blue]%}$(git_prompt_info)%{$fg_bold[blue]%} % %{$reset_color%}'
 fi
+
+# Load prompt functions (Must go before prompt functions)
+autoload -U colors && colors
+setopt promptsubst
 
 function git_prompt_info() {
   local ref
@@ -82,9 +87,10 @@ ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg_bold[blue]%}git:(%{$fg[red]%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%} "
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}) %{$fg[yellow]%}✗"
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%})"
-
-autoload -U colors && colors
-setopt promptsubst
+# }}}
+# Color Support {{{
+# LS_COLORS
+export LS_COLORS='no=00:fi=00:di=34:ow=34;40:ln=35:pi=30;44:so=35;44:do=35;44:bd=33;44:cd=37;44:or=05;37;41:mi=05;37;41:ex=01;31:*.cmd=01;31'
 # }}}
 # Terminal Vim {{{
 # Terminal Vim key bindings
