@@ -1,91 +1,32 @@
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-
+# Dotfile Aliases {{{
 # Aliases for opening files in vim
-alias zshrc="$EDITOR ~/.zshrc"
-alias ohmyzsh="cd ~/.oh-my-zsh"
-alias vimrc="$EDITOR ~/.vimrc"
-alias bashrc="$EDITOR ~/.bashrc"
-alias tmuxconf="$EDITOR ~/.tmux.conf"
-alias shellaliases="$EDITOR ~/.shell_aliases"
-alias shellconfig="$EDITOR ~/.shell_config"
-alias shellfunctions="$EDITOR ~/.shell_functions"
-alias gitconfig="$EDITOR ~/.gitconfig"
+alias zshrc="$EDITOR $HOME/.zshrc"
+alias ohmyzsh="cd $HOME/.oh-my-zsh"
+alias vimrc="$EDITOR $HOME/.vimrc"
+alias bashrc="$EDITOR $HOME/.bashrc"
+alias tmuxconf="$EDITOR $HOME/.tmux.conf"
+alias shellaliases="$EDITOR $HOME/.shell_aliases"
+alias shellconfig="$EDITOR $HOME/.shell_config"
+alias shellfunctions="$EDITOR $HOME/.shell_functions"
+alias gitconfig="$EDITOR $HOME/.gitconfig"
 
-# Enable aliases to be sudo’ed
-alias sudo="sudo "
+# zshrc config
+alias reload="source $HOME/.zshrc && echo 'Shell config reloaded from ~/.zshrc'"
+alias reloadtmux="tmux source-file $HOME/.tmux.conf"
 
-# Shortcuts
-alias o="open"
-alias oo="open ."
-alias e="$EDITOR"
-alias g="git"
-alias v="vim"
-alias gh="github"
-alias rm="trash"
-alias x+="chmod +x"
-# alias -- +x="chmod +x"
-
-# Easier navigation: .., ..., ~ and -
-alias ..="cd .."
-alias cd..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
-alias ~="cd ~" # `cd` is probably faster to type though
-alias -- -="cd -"
-
-# mv, rm, cp, gunzip
-alias mv='mv -v'
-alias rm='rm -i -v'
-alias cp='cp -v'
-alias ungz="gunzip -k"
-
-# Trim new lines and copy to clipboard
-# alias trimcopy="tr -d '\n' | pbcopy"
-#
-# alias cask='brew cask' # i <3 u cask
-# alias where=which # sometimes i forget
-# alias brwe=brew  #typos
-
-# Vagrant aliases
-# alias vag='vagrant'
-# alias vagup='vagrant up'
-# alias vagdestroy='vagrant destroy'
-# alias vagssh='vagrant ssh'
-# alias vaghalt='vagrant halt'
-
-# Be nice
-alias hosts='sudo $EDITOR /etc/hosts'   # yes I occasionally 127.0.0.1 twitter.com ;)
-alias vtop="vtop --theme wizard"  # themes: acid, becca, brew, dark, monokai, parallax, seti, wizard
-
-#
-# Time to upgrade `ls`
-#
-
-# Use coreutils `ls` if possible
-hash gls >/dev/null 2>&1 || alias gls="ls"
-
-# Always use color output for `ls`
-# Detect which `ls` flavor is in use
-# if [[ "$OS" = "mac" ]]; then
-#     colorflag="-G"
-# else
-    colorflag="--color"
-# fi
-
-export CLICOLOR_FORCE=1
+# zsh.local config
+# alias localrc="if [[ -a ~/.zsh.local ]]; then ${EDITOR} ~/.zsh.local; fi"
+# }}}
+# Default Unix Commands {{{
 
 # List all files (including hidden files) in long format
-alias ll="ls -avlFh ${colorflag}"
+alias ll="ls -avlFh --color"
 
 # List contents with type flags
-alias ls='ls -vFh ${colorflag}'
+alias ls='ls -vFh --color'
 
 # List all files (including hidden files)
-alias la="ls -vAF ${colorflag}"
+alias la="ls -vAF --color"
 
 # Faster ls
 alias l="ls -vCF"
@@ -93,25 +34,18 @@ alias l="ls -vCF"
 # List only directories
 # alias lsd='gls -l | grep "^d"'
 
-# `cat` with beautiful colors. requires Pygments installed.
-# sudo easy_install -U Pygments
-# alias c='pygmentize -O style=monokai -f console256 -g'
+# Grep
+alias grep='grep --color'
 
-# IP addresses
-# alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
-# alias localip="ipconfig getifaddr en1"
-# alias myip="ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print \$2}'"
+# mv, rm, cp, gunzip
+alias mv='mv -v'
+alias rm='rm -i -v'
+alias cp='cp -v'
+alias ungz="gunzip -k"
 
-# Copy my public key to the pasteboard
-# alias pubkey="more ~/.ssh/id_rsa.pub | pbcopy | printf '=> Public key copied to pasteboard.\n'"
-
-# Flush DNS cache
- # alias flushdns="dscacheutil -flushcache"
-
-#
-# GIT STUFF
-#
-
+alias history="history 1"
+# }}}
+# Git Aliases {{{
 # List git branches on the local machine sorted by recent updates, adding a star to remote tracking branches
 # function git_list_branches() {
 #   RED="\e[91m";
@@ -122,96 +56,54 @@ alias l="ls -vCF"
 #     printf "%-53s - %s %s\n" $time_ago $branch $tracks_upstream;
 #   done | sort;
 # }
+#
 
-# Git aliases
-# More Git tips http://firstaidgit.io/
-alias gss="git status -s"
-alias gp="git push origin HEAD"
-alias gpt="git push origin HEAD && git push --tags"
-alias wip="git commit -m'WIP' . && git push origin HEAD"
-alias grok="ngrok start rem.jsbin-dev.com static.rem.jsbin-dev.com learn.rem.jsbin-dev.com"
-alias gl='git log'
-alias glp5='git log -5 --pretty --oneline' # view your last 5 latest commits each on their own line
-alias glt='git log --all --graph --decorate --oneline --simplify-by-decoration' # pretty branch status
-alias glsw='git log -S' # search the commit history for the word puppy and display matching commits (glsw [word])
-alias gs='git status'
+alias g="git"
+alias ga='git add'
+
+alias gc='git commit -v'
+alias gca='git commit -v -a'
+alias gcam='git commit -a -m'
+alias gcmsg='git commit -m'
+
 alias gd='git diff'
-alias gm='git commit -m'
-alias gam='git commit -am'
-alias gb='git branch'
-alias gc='git checkout'
-alias gra='git remote add'
-alias grr='git remote rm'
-alias gbt=git_list_branches
-alias gpu='git pull origin HEAD --prune'
-alias gcl='git clone'
-alias gta='git tag -a -m'
-alias gf='git reflog' # allows you to see every step you have made with git allowing you to retract and reinstate your steps
-alias gap='git add -p' # step through each change, or hunk
-alias gsl='git shortlog -sn' # quickly get a list of contributors and see how many commits each person has
-alias gws='git diff --shortstat "@{0 day ago}"' # how many lines of code you have written today
-alias gwts='git ls-files | xargs wc -l' # count number of lines of code in a git project
-alias ggmp='git checkout -' # jump back to to your last branch
-alias gst='git stash' # stash git changes and put them into your list
-alias gdtp='git stash pop' # bring back your changes, but it removes them from your stash
-alias gchp='git cherry-pick' # cherry pick the committed code in your own branch (gchp [hash])
-alias gcln='git clean -xfd' # remove untracked files
+alias gdca='git diff --cached'
 
-alias gar='git ls-files --deleted -z | xargs -0 git rm' # commit deleted files
+alias glg='git log --stat'
+alias glgp='git log --stat -p'
+alias glgg='git log --graph'
+
+alias gss='git status -s'
+alias gst='git status'
 
 # Undo a `git push`
 alias undopush="git push -f origin HEAD^:master"
 
 # `cd` to Git repo root
 # alias gr='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
+# }}}
+# Miscellaneous {{{
+# Enable aliases to be sudo’ed
+alias sudo="sudo "
 
-# Gist
-# alias gist-paste="gist --private --copy --paste --filename"  # gist-paste filename.ext -- create private Gist from the clipboard contents
-# alias gist-file="gist --private --copy"  # gist-file filename.ext -- create private Gist from a file
+# Shortcuts
+alias o="open"
+alias oo="open ."
+alias e="$EDITOR"
+alias v="vim"
+alias x+="chmod +x"
+# alias -- +x="chmod +x"
 
-# Networking. IP address, dig, DNS
-# alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
-# alias dig="dig +nocmd any +multiline +noall +answer"
+# Easier navigation: .., ...
+alias ..="cd .."
+alias cd..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
 
-# View HTTP traffic
-# alias sniff="sudo ngrep -W byline -d 'en0' -t '^(GET|POST) ' 'tcp and port 80'"
-# alias httpdump="sudo tcpdump -i en0 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
-
-# Enhanced WHOIS lookups
-# alias whois="whois -h whois-servers.net"
-
-# Download file and save it with filename of remote file
-# alias get="curl -O -L"
-
-# Disc utils
-# alias diskspace_report="df -P -kHl"
-# alias free_diskspace_report="diskspace_report"
-
-# File size
-# alias fs="stat -f \"%z bytes\""
-
-# zshrc config
-# alias zshrc="${EDITOR} ${$(cd -P $(dirname $0) && cd ..; pwd -P)}"
-alias reload="source ~/.zshrc && echo 'Shell config reloaded from ~/.zshrc'"
-alias reloadtmux="tmux source-file ~/.tmux.conf"
-
-# zsh.local config
-# alias localrc="if [[ -a ~/.zsh.local ]]; then ${EDITOR} ~/.zsh.local; fi"
-
-# HTTP Requests. One of @janmoesen’s ProTip™s
-# for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
-#   alias "$method"="lwp-request -m '$method'"
-# done
-
-# Miscellaneous
 alias vis='killall cava; gnome-terminal -e "cava" --window-with-profile=dc1 --role=dc1; sleep 0.3; wmctrl -i -r "$(wmctrl -l | grep "cava" | tail -1 | cut -f1 -d'"'"' '"'"')" -e 0,-4,1023,1928,56; disown'
-
-
-# Packages
-# alias mysql=/usr/local/mysql/bin/mysql
-# alias mysqladmin=/usr/local/mysql/bin/mysqladmin
-
-# Languages
-# alias python="python3"
-# alias gcc="gcc-7"
-# alias g++="g++-7"
+alias vtop="vtop --theme wizard"  # themes: acid, becca, brew, dark, monokai, parallax, seti, wizard
+# `cat` with beautiful colors. requires Pygments installed.
+# sudo easy_install -U Pygments
+alias c='pygmentize -O style=monokai -f console256 -g'
+# }}}
