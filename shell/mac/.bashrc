@@ -1,8 +1,10 @@
-# If you come from bash you might have to change your $PATH.
-homebrew="/usr/local/opt/grep/libexec/gnubin:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/sbin"
-PATH=$HOME/bin:$homebrew:$PATH
+# Use GNU coreutils adnd GNU grep with 'g' prefix
+gnubin="/usr/local/opt/grep/libexec/gnubin:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/sbin"
+PATH=$HOME/bin:$gnubin:$PATH
+
+# Access man pages with normal names without 'g' prefix
 MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
 
 
-# Force colors support
+# Force color support
 export CLICOLOR_FORCE=1
