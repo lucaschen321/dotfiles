@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# https://github.com/nicksp/dotfiles/blob/master/setup.sh
-
-
 #
 # Variables/Constants
 #
@@ -99,11 +96,7 @@ install_zsh() {
     # Check if zsh is installed. If so:
     which zsh &> /dev/null
     if [[ $? == 0 ]]; then
-        # Install zsh plugins:
-        # - zsh-autosuggestions
-        # - zsh-syntax-highlighting
-
-         # Install zsh-autosuggestions and zsh-syntax-highlighting
+         # Install zsh plugins: zsh-autosuggestions, zsh-syntax-highlighting
          update_submodules
 
         # Edit /etc/shells to incorporate installed zsh path if not present
@@ -201,17 +194,8 @@ install_packages() {
 install_vim_and_tmux_plugins() {
 
     #
-    # Install Vim Plugins:
+    # Install Vim Plugins (see ~/.vimrc for plugins):
     #
-    # - Pathogen (Plugin manager)
-    # - Solarized
-    # - NerdTree
-    # - Syntastic
-    # - Airline
-    # - Vim Session
-    # - Vim Notes
-    # - Surround.vim
-
     print_question "Install vim plugins? (y/n)"
     if [[ "$ANS" == "yes" ]]; then
         print_info "Installing vim plugins"
@@ -232,7 +216,7 @@ install_vim_and_tmux_plugins() {
         print_info "Installing tmux plugins"
 
         # Install Tmux plugin manager and load plugins
-        git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+        git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
         tmux run-shell "$HOME"/.tmux/plugins/tpm/bindings/install_plugins
 
         print_success "Done"
@@ -250,33 +234,69 @@ symlink_dotfiles() {
             print_success "Done"
         fi
 
-        FILES_TO_SYMLINK=(
-            '.bash_profile'
-            '.bashrc'
-            '.gitconfig'
-            '.shell_aliases'
-            '.shell_config'
-            '.shell_exports'
-            '.shell_functions'
-            '.tmux.conf'
-            '.vimrc'
-            '.zshrc'
+
+        # File in SOURCE_FILES_TO_SYMLINK array **MUST** match corresponding
+        # file in TARGET_FILES_TO_SYMLINK array
+        SOURCE_FILES_TO_SYMLINK=(
+            "$DOTFILES_DIR/.bash_profile"
+            "$DOTFILES_DIR/.bashrc"
+            "$DOTFILES_DIR/.gitconfig"
+            "$DOTFILES_DIR/.shell_aliases"
+            "$DOTFILES_DIR/.shell_config"
+            "$DOTFILES_DIR/.shell_exports"
+            "$DOTFILES_DIR/.shell_functions"
+            "$DOTFILES_DIR/.tmux.conf"
+            "$DOTFILES_DIR/.vimrc"
+            "$DOTFILES_DIR/.zshrc"
+            "$DOTFILES_DIR/shell/local/.shell_exports.local"
+            "$DOTFILES_DIR/shell/local/.shell_aliases.local"
+            "$DOTFILES_DIR/shell/local/.shell_functions.local"
+            "$DOTFILES_DIR/shell/local/.shell_config.local"
+            "$DOTFILES_DIR/shell/local/.bashrc.local"
+            "$DOTFILES_DIR/shell/local/.gitconfig.local"
+            "$DOTFILES_DIR/submodules/zsh" # Symlink .zsh directory
+        )
+        TARGET_FILES_TO_SYMLINK=(
+            "$HOME/.bash_profile"
+            "$HOME/.bashrc"
+            "$HOME/.gitconfig"
+            "$HOME/.shell_aliases"
+            "$HOME/.shell_config"
+            "$HOME/.shell_exports"
+            "$HOME/.shell_functions"
+            "$HOME/.tmux.conf"
+            "$HOME/.vimrc"
+            "$HOME/.zshrc"
+            "$HOME/.shell_exports.local"
+            "$HOME/.shell_aliases.local"
+            "$HOME/.shell_functions.local"
+            "$HOME/.shell_config.local"
+            "$HOME/.bashrc.local"
+            "$HOME/.gitconfig.local"
+            "$HOME/.zsh"
         )
 
-        mkdir "$DOTFILES_BACKUP_DIR"
+        if [[ ! -e "$DOTFILES_BACKUP_DIR" ]]; then
+            mkdir "$DOTFILES_BACKUP_DIR"
+        fi
 
         # Move existing dotfiles to backup directory
         print_info "Backing up dotfiles"
-        for i in "${FILES_TO_SYMLINK[@]}"; do
-            mv "$HOME/${i}" "$DOTFILES_BACKUP_DIR"
+        for file in "${TARGET_FILES_TO_SYMLINK[@]}"; do
+            if [[ -e "${file}" ]]; then
+                mv "${file}" "$DOTFILES_BACKUP_DIR"
+            fi
         done
         print_success "Done"
 
         # Create symlinks in home directory to new dotfiles
         print_info "Creating symlinks in home directory to dotfiles"
-        for i in "${FILES_TO_SYMLINK[@]}"; do
-            ln -s "$DOTFILES_DIR/${i}" "$HOME/${i}"
+        for i in $(seq 1 ${#TARGET_FILES_TO_SYMLINK[@]}); do
+            if [[ -e "${SOURCE_FILES_TO_SYMLINK[i]}" ]]; then
+                ln -s "${SOURCE_FILES_TO_SYMLINK[i]}"  "${TARGET_FILES_TO_SYMLINK[i]}"
+            fi
         done
+
         print_success "Done"
     fi
 }
@@ -291,6 +311,3 @@ main(){
 }
 
 main
-
-# Reload zsh settings
-# source ~/.zshrc

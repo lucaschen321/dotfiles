@@ -1,0 +1,22 @@
+# OPAM configuration
+if [ ! "$SHELL" = "$(which zsh)" ]; then
+    . "$HOME"/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
+elif [ ! "$SHELL" = "$(which bash)" ]; then
+    . "$HOME"/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+fi
+
+# Enable shims and autocompletions for Python
+# eval "$(pyenv init -)"
+
+# IPython
+# export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
+
+# Anaconda
+# export PATH="$HOME/anaconda/bin:$PATH"
+
+# Python
+PATH=/usr/local/share/python:$PATH
+
+PATH=$HOME/.anaconda3/bin:$PATH
+
+if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi

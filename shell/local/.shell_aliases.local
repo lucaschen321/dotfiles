@@ -1,0 +1,11 @@
+# ssh Aliases
+alias 4410vm="ssh -p 2222 localhost -l vm"
+alias ubuntuvm="ssh -p 2222 localhost -l lucaschen"
+alias csug="ssh lmc336@ugclinux.cs.cornell.edu"
+
+# Aliases for opening files types in apps
+alias marked='open -a "Marked 2" '
+alias matlab="/Applications/MATLAB_R2017b.app/bin/matlab -nodesktop -nosplash -nodisplay"
+
+
+alias create_large_files="mkfile $(($(df -m / | tail -1 | awk '{print $4}') / 100 ))m fillerfile && tee fillerfile.{1..90} <fillerfile > /dev/null"
