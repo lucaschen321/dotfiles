@@ -8,7 +8,12 @@ export RED="\033[0;31m"
 # Ask for the administrator password upfront
 sudo -v
 
-# Make sure we’re using the latest Homebrew
+# Add repositories to install from
+repos=(
+)
+sudo add-apt-repository "${repos[@]}"
+
+# Make sure we’re using the latest packages
 sudo apt-get update
 
 # Upgrade any already-installed formulae
@@ -24,11 +29,12 @@ packages=(
     curl
     git
     pandoc
-    tmux
-    unity-tweak-tool
     redshift
     redshift-gtk
+    ripgrep
     silversearcher-ag
+    tmux
+    unity-tweak-tool
     xsel
 
     # Languages/Frameworks

@@ -60,10 +60,12 @@ formulae=(
     perl
     python
     python@2
+    rbenv
     reattach-to-user-namespace
+    ripgrep
     ruby
+    ruby-build
     source-highlight
-    the_silver_searcher
     tmux
     tree
     vim
