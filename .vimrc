@@ -174,6 +174,16 @@ function! ToggleFoldMethod()
     echo "Fold method set to: " . &foldmethod
 endfunction
 
+let g:original_conceallevel=&conceallevel
+function! ToggleConceal()
+    if &conceallevel == 0
+        let &conceallevel=g:original_conceallevel
+    else
+        let g:original_conceallevel=&conceallevel
+        set conceallevel=0
+    endif
+endfunction
+command! ToggleConceal call ToggleConceal()
 " }}}
 " Plugins {{{
 
@@ -181,12 +191,9 @@ endfunction
 call plug#begin('~/.vim/plugged')
 
         " Install NerdTree
-        Plug 'scrooloose/nerdtree', {
-            \'on': ['NERDTree', 'NERDTreeToggle', 'NERDTreeTabsToggle']
-        \}
-
-        " Install Syntastic
-        " Plug 'vim-syntastic/syntastic'
+        " Plug 'scrooloose/nerdtree', {
+        "     \'on': ['NERDTree', 'NERDTreeToggle', 'NERDTreeTabsToggle']
+        " \}
 
         " Install Airline
         Plug 'vim-airline/vim-airline'
@@ -207,6 +214,7 @@ call plug#begin('~/.vim/plugged')
 
         " Install fzf
         Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+        Plug 'junegunn/fzf.vim'
 
         " Ultisnips
         Plug 'SirVer/ultisnips'
@@ -226,34 +234,47 @@ call plug#begin('~/.vim/plugged')
                 \'for': 'YcmGenerateConfig'
             \}
 
-        " Vim-complete
-        " Plug 'ajh17/VimCompletesMe'
-
-        "delimitMate
-        Plug 'Raimondi/delimitMate'
-
-        " javacomplete
-        Plug 'artur-shaik/vim-javacomplete2', {
-                \'for': 'java'
-            \}
-
-        " Install jedi-vim
-        Plug 'davidhalter/jedi-vim', {
-                \'for': 'python'
-            \}
+        " auto-pairs
+        Plug 'jiangmiao/auto-pairs'
 
         " Rainbow_Parentheses
         Plug 'junegunn/rainbow_parentheses.vim', {
                 \'on': 'RainbowToggle'
             \}
 
-        "
+        " ale
         Plug 'w0rp/ale'
+
+        " Quick-Scope
+        Plug 'unblevable/quick-scope'
+
+        " vim-gitgutter
+        Plug 'airblade/vim-gitgutter'
+
+        "Plug 'Valloric/YouCompleteMe', {
+        "    \'do': './install.py --clang-completer'
+        "\}
+
+        " deoplete
+        if has('nvim')
+          Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+        else
+          Plug 'Shougo/deoplete.nvim'
+          Plug 'roxma/nvim-yarp'
+          Plug 'roxma/vim-hug-neovim-rpc'
+        endif
+
+        " deoplete-jedi
+        Plug 'deoplete-plugins/deoplete-jedi', {
+           \'for': 'python'
+        \}
+
+        " vim-polyglot
+        " Plug 'sheerun/vim-polyglot'
 call plug#end()
 " }}}
 " Plugin Configurations {{{
-
-" NERDTree Configuration
+" NERDTree Settings {{{
 " autocmd vimenter * NERDTree     " Open a NERDTree automatically on vim startup
 " autocmd StdinReadPre * let s:std_in=1 " open a NERDTree automatically when vim
                                       " starts up if no files were specified
@@ -263,7 +284,7 @@ let NERDTreeShowHidden=1 " Show hidden files by default
 let NERDTreeQuitOnOpen=1 " Close automatically when opening/editing a file
 map <Leader>n <plug>NERDTreeTabsToggle<CR> " Open NERDTree with <CTRL+n>
 " autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif "Close vim if the only window left open is a NERDTree
-
+" }}}
 " ALE settings {{{
 " Quick leader toggle for ALE checking
 nnoremap <Leader>ta :ALEToggle<CR>
@@ -283,19 +304,7 @@ nnoremap <Leader>ta :ALEToggle<CR>
 nnoremap <Leader>an :ALENextWrap<CR>
 nnoremap <Leader>ap :ALEPreviousWrap<CR>
 " }}}
-
-" NERDTree Tabs
-let g:nerdtree_tabs_open_on_gui_startup = 0
-let g:nerdtree_tabs_open_on_console_startup = 0
-let g:nerdtree_tabs_no_startup_for_diff = 1
-let g:nerdtree_tabs_smart_startup_focus = 1
-let g:nerdtree_tabs_open_on_new_tab = 1
-let g:nerdtree_tabs_meaningful_tab_names = 1
-let g:nerdtree_tabs_autoclose = 1
-let g:nerdtree_tabs_synchronize_view = 1
-let g:nerdtree_tabs_synchronize_focus = 1
-
- "Use ocp-indent to make autotabbing easyj
+ "Use ocp-indent to make autotabbing easy
 " let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
 " execute "set rtp+=" . g:opamshare . "/merlin/vim"
 filetype plugin on " Turn on omni completion
@@ -309,33 +318,7 @@ let python_highlight_all = 1
 " let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
 " execute "set rtp+=" . g:opamshare . "/merlin/vim"
 
-" Recommended Syntastic settings for beginners
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-" let g:syntastic_check_on_wq = 1
-let g:syntastic_loc_list_height=5
-
-let g:syntastic_cpp_check_header = 1
-let g:syntastic_cpp_compiler = "g++"
-let g:syntastic_cpp_compiler_options = "-std=c++11 -Wall -Wextra -Wpedantic -Wno-sign-compare"
-
-" Checkers for Syntastic
-let g:syntastic_python_checkers = ['flake8']
-let g:syntastic_ocaml_checkers = ['merlin']
-let g:syntastic_sh_checkers = ['bashate', 'sh', 'shellcheck']
-let g:syntastic_c_checkers = ['gcc', 'make']
-let g:syntastic_vim_checkers = ['vimlint', 'vint']
-let g:syntastic_java_checkers = ['checkstyle', 'javac']
-let g:syntastic_markdown_checkers = ['mdl']
-
-" Checker Settings
-let g:syntastic_python_flake8_post_args='--ignore=E501'
-
-" Airline settings
+" Airline settings {{{
  let g:airline_theme='onedark'
 let g:airline#extensions#ale#enabled = 1
 " let g:solarized_base16 = 1
@@ -344,47 +327,46 @@ let g:airline#extensions#ale#enabled = 1
 " let g:airline#extensions#tabline#enabled = 1
 " let g:airline#extensions#tabline#left_sep = ' '
 " let g:airline#extensions#tabline#left_alt_sep = '|'
-
-" Vim Session settings
+" }}}
+" Vim Session settings {{{
 let g:session_autosave = 'no'
 set sessionoptions-=options    " Do not save global and local values
 set sessionoptions-=folds      " Do not save folds
 set sessionoptions-=buffers
 set sessionoptions-=blank
-
-" Vim Notes settings
+" }}}
+" Vim Notes settings {{{
 let g:notes_directories = ['~/Google Drive/Documents/Notes/Vim Notes'] ", '~/Google Drive/Documents/Notes/Text Notes/CS/Programming Langauges']
 let g:notes_tab_indents = 0
 let g:notes_conceal_url = 0
-
-" " YouCompleteMe Settings
-" " let g:loaded_youcompleteme = 1 " Don't load YCM
-" let g:ycm_python_binary_path = '/usr/bin/python3'
-" let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
-" let g:ycm_autoclose_preview_window_after_completion = 1
-" let g:ycm_autoclose_preview_window_after_insertion = 1
-" let g:ycm_register_as_syntastic_checker = 0
-" Don't show ycm checker
+" }}}
+" YouCompleteMe Settings {{{
+let g:loaded_youcompleteme = 1 " Don't load YCM
+let g:ycm_python_binary_path = '~/.anaconda3/bin/python'
+let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/.ycm_extra_conf.py'
 let g:ycm_show_diagnostics_ui = 0
-" let g:ycm_global_ycm_extra_conf = 0
-" let g:ycm_confirm_extra_conf=0
-let g:ycm_complete_in_comments = 1
-" let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_collect_identifiers_from_comments_and_strings = 0
-let g:ycm_server_keep_logfiles = 1
-let g:ycm_server_log_level = 'debug'
-
-" If 1, then menu won't display for 1 letter snippets - must be expanded using
-" expand trigger
-let g:ycm_min_num_of_chars_for_completion = 2
-let g:ulti_expand_or_jump_res = 0
-
-
-" Indent Line Settings
+let g:ycm_key_list_stop_completion = ['<C-y>', '<Enter>']
+" }}}
+" Deoplete Settings {{{
+let g:deoplete#sources#jedi#show_docstring = 1
+" Enable deoplete when InsertEnter.
+let g:deoplete#enable_at_startup = 0
+autocmd InsertEnter * call deoplete#enable()
+let g:deoplete#max_list = 50
+" Quick leader toggle for autocompletion
+nnoremap <Leader>td :call deoplete#toggle()<CR>  " Doesn't work with enable deoplete when InsertEnter (which re-enables deoplete)
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" Close preview window affter completion
+" autocmd CompleteDone * silent! pclose!
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+" }}}
+" Indent Line Settings {{{
 let g:indentLine_char = '┆'"
 let g:indentLine_color_term = 248
-
-" Ultisnips
+autocmd FileType markdown,tex let g:indentLine_enabled=0
+" }}}
+" Ultisnips Settings {{{
 " set runtimepath+=$DOTFILES_DIR/lib/
 " let g:UltiSnipsSnippetDirectories=["snippets_custom"]
 let g:UltiSnipsExpandTrigger = "<LocalLeader><Tab>"
@@ -402,17 +384,41 @@ function ExpandSnippetOrCarriageReturn()
     endif
 endfunction
 inoremap <expr> <CR> pumvisible() ? "\<C-R>=ExpandSnippetOrCarriageReturn()\<CR>" : "\<CR>"
-
-" Jedi
-" let g:jedi#auto_initialization = 0
-" let g:jedi#popup_on_dot = 0
-let g:jedi#popup_select_first = 0
-
-" Rainbow_Parentheses
+" }}}
+" Rainbow_Parentheses Settings {{{
 let g:rainbow#max_level = 20
 let g:rainbow#pairs = [['(', ')'], ['[', ']']]
 let g:rainbow#blacklist = [233, 234, 235, 236]
 " au BufEnter * :Rainbow_Parentheses<CR>
+" }}}
+" FZF settings {{{
+let g:fzf_command_prefix = 'F'
+
+" Find files in cwd
+nnoremap <C-p> :FZF<CR>A
+
+" Find lines in open buffers (note <C-/> is mapped to <C-_>)
+nnoremap <C-_> :FLines<CR>
+
+" Buffers
+nnoremap <leader>b :FBuffers<CR>
+
+" Tabs
+nnoremap <leader>t :FWindows<CR>
+
+" Marks
+nnoremap <leader>m :FMarks<CR>
+
+" History
+nnoremap <leader>h :FHistory<CR>
+nnoremap q: :FHistory:<CR>
+nnoremap q/ :FHistory/<CR>
+" }}}
+" vim-gitgutter settings {{{
+highlight GitGutterAdd    guifg=#009900 ctermfg=2
+highlight GitGutterChange guifg=#bbbb00 ctermfg=3
+highlight GitGutterDelete guifg=#ff2222 ctermfg=1
+" }}}
 " }}}
 " tabline from StackOverflow (with auto-resizing modifications) {{{
 set tabline+=%!MyTabLine()
@@ -524,8 +530,7 @@ function! MyTabLine()
     return tabline
 endfunction
 " }}}
-
-" # Function to permanently delete views created by 'mkview'
+" Function to permanently delete views created by 'mkview' {{{
 function! MyDeleteView()
     let path = fnamemodify(bufname('%'),':p')
     " vim's odd =~ escaping for /
@@ -545,3 +550,4 @@ endfunction
 command Delview call MyDeleteView()
 " Lower-case user commands: http://vim.wikia.com/wiki/Replace_a_builtin_command_using_cabbrev
 cabbrev delview <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'Delview' : 'delview')<CR>
+" }}}
