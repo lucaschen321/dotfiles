@@ -64,6 +64,7 @@ alias gdca='git diff --cached'
 alias glg='git log --stat'
 alias glgp='git log --stat -p'
 alias glgg='git log --graph'
+alias glo='git log --oneline --decorate --no-abbrev'
 
 alias gss='git status -s'
 alias gst='git status'
