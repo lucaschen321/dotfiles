@@ -35,7 +35,6 @@ The setup script gives the option for:
 ``` sh
 git clone https://github.com/lucaschen321/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
-chmod +x setup.sh
 ./setup.sh
 ```
 
@@ -47,13 +46,5 @@ chmod +x setup.sh
 - Automatic Software installation
 - Local customization
   - OS specific dotfiles in `~/.dotfiles/shell/{mac|ubuntu}`
-  - Local custom dotfiles in `~/.dotfiles/shell/custom`
+  - Local custom dotfiles in `~/.dotfiles/shell/local`
   - Creates local `~/.gitconfig.local` for sensitive information like `git` credentials. It is included after `~/.gitconfig`, allowing its content to overwrite existing configurations
-
-## Resources
-
-I watch the following respositories and add the best changes to this respository.
-
-- [Guide to Dotfiles on Github](http://dotfiles.github.io/)
-- [Chesley Tan's Dotfiles](https://github.com/ChesleyTan/linuxrc/)
-- [Nick Plekhanov's Dotfiles](https://github.com/nicksp/dotfiles)

@@ -18,7 +18,10 @@ zstyle ':completion:*' menu select
 # Colored cd tab complete
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
 autoload -Uz compinit
-compinit
+for dump in ~/.zcompdump(N.mh+24); do
+  compinit
+done
+compinit -C
 
 
 # Tetris :)
@@ -95,7 +98,8 @@ export LS_COLORS='no=00:fi=00:di=34:ow=34;40:ln=35:pi=30;44:so=35;44:do=35;44:bd
 # Terminal Vim {{{
 # Terminal Vim key bindings
 bindkey -v
-bindkey '^P' up-history
+# bindkey '^P' up-history
+bindkey -s '^P' '$EDITOR $(fzf)\n'
 bindkey '^N' down-history
 bindkey '^?' backward-delete-char
 bindkey '^h' backward-delete-char
@@ -147,6 +151,8 @@ fi
 
 [ -f $HOME/.fzf.zsh ] && source $HOME/.fzf.zsh
 # }}}
-# Source general, OS-specific and custom dotfiles {{{
+# Source general, OS-specific and local dotfiles {{{
 source "$DOTFILES_DIR"/shell/.bashrc
 # }}}
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
